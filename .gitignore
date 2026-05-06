@@ -1,0 +1,10 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Old/temp files
+uploads/
+synergy_arc_landing.html
+desktop.html
+mobile.html

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synergy Arc International — Printing, Cardboard Structures &amp; Mall Displays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Enboard teaser card (home only) ── */
+.en-teaser{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch;background:var(--wh);border-radius:24px;border:1.5px solid var(--bdn);overflow:hidden;margin-top:56px}
+.en-teaser-body{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.en-teaser-badge{display:inline-flex;align-items:center;gap:8px;background:var(--g);color:#fff;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:18px;align-self:flex-start}
+.en-teaser-h{font-family:var(--fh);font-size:clamp(20px,2.2vw,28px);font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;margin-bottom:20px}
+.en-teaser-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.en-teaser-s{background:var(--s1);border-radius:12px;padding:14px 16px;border:1px solid var(--bd)}
+.en-teaser-sn{font-size:18px;font-weight:700;color:var(--g);line-height:1;margin-bottom:3px;letter-spacing:-.02em}
+.en-teaser-sl{font-size:11.5px;color:var(--mt);line-height:1.4}
+.en-teaser-photo{min-height:340px;border-radius:0}
+@media(max-width:900px){.en-teaser{grid-template-columns:1fr}.en-teaser-photo{min-height:220px}}
+</style>
+</head>
+<body>
+
+<!-- ══ NAVIGATION ══ -->
+<nav>
+  <a class="nl" href="index.html">
+    <svg viewBox="0 0 48 30" fill="none"><path d="M4 26 Q24 2 44 26" stroke="#00BF63" stroke-width="3.5" stroke-linecap="round" fill="none"/><circle cx="4" cy="26" r="3" fill="#00BF63" opacity=".4"/><circle cx="44" cy="26" r="3" fill="#00BF63" opacity=".4"/><circle cx="24" cy="4.5" r="3.5" fill="#00BF63"/></svg>
+    <div class="nl-t"><b>SYNERGY</b> ARC</div>
+  </a>
+  <ul class="nlinks">
+    <li><a href="services.html">Services</a></li>
+    <li><a href="enboard.html">Enboard</a></li>
+    <li><a href="portfolio.html">Our Work</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a class="ncta" href="https://wa.me/60126216212">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+    Get a Free Sample →
+  </a>
+  <button class="mob" id="mob-btn" aria-label="Open menu" onclick="tmm()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob-menu" id="mob-menu">
+  <a href="services.html">Services</a>
+  <a href="enboard.html">Enboard</a>
+  <a href="portfolio.html">Our Work</a>
+  <a href="contact.html">Contact</a>
+  <a class="mob-cta" href="https://wa.me/60126216212">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+    Get a Free Sample →
+  </a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-blob1"></div>
+  <div>
+    <div class="badge"><div class="badge-dot"></div><span>Printing &amp; Events · Malaysia</span></div>
+    <h1 class="tw-h1" id="tw-headline" aria-label="Your event, installed on time. Looks premium. Leaves less behind.">
+      <span class="tw-line tw-line-1" aria-hidden="true"><span class="tw-line-inner" id="tw-inner1"></span><span class="tw-cursor" id="tw-cursor"></span></span>
+      <span class="tw-line tw-line-2" aria-hidden="true"><span class="tw-line-inner" id="tw-inner2">Looks premium.</span></span>
+      <span class="tw-line tw-line-3" aria-hidden="true"><span class="tw-line-inner" id="tw-inner3">Leaves less behind.</span></span>
+    </h1>
+    <p class="hero-sub-line">One team. Full print. Full build. Nationwide install.</p>
+    <p class="hero-desc">We handle everything from print to installation — conventional or sustainable, or both. Whether you need a standard PVC roadshow or a fully recyclable Enboard booth, we deliver it on time, on brand, and without the coordination headache.</p><p class="hero-desc" style="margin-top:10px">Not ready to go fully sustainable? Start with one piece. We'll handle the rest.</p>
+    <div class="hbtns">
+      <a class="btn-p" href="https://wa.me/60126216212">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        Request a Free Sample →
+      </a>
+      <a class="btn-o" href="services.html">See What We Do →</a>
+    </div>
+    <div class="hstats">
+      <div class="hs"><div class="hs-n">48%</div><div class="hs-l">faster install vs carpentry</div></div>
+      <div class="hs"><div class="hs-n">100+</div><div class="hs-l">events delivered</div></div>
+      <div class="hs"><div class="hs-n">90%</div><div class="hs-l">recyclable after event</div></div>
+    </div>
+    <p style="font-size:11px;color:var(--mt2);margin-top:8px;font-style:italic;max-width:520px">*Based on Synergy Arc project data and partner builds. Results vary by project scope.</p>
+  </div>
+  <div class="hero-ph ph">
+    <div class="ph-tag">Hero Photo</div>
+    <div class="ph-lab">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      Hero Image · 4:5
+      <small>Photo of a finished booth or live event setup</small>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="mq"><div class="mq-tr" id="mqt">
+  <span>Printing<span class="mq-dot"></span></span>
+  <span>Cardboard Structures<span class="mq-dot"></span></span>
+  <span>Mall Displays<span class="mq-dot"></span></span>
+  <span>Booths &amp; Backdrops<span class="mq-dot"></span></span>
+  <span>Roadshows<span class="mq-dot"></span></span>
+  <span>Installation Nationwide<span class="mq-dot"></span></span>
+  <span>Eco-Friendly Materials<span class="mq-dot"></span></span>
+  <span>ESG-Ready Reporting<span class="mq-dot"></span></span>
+</div></div>
+
+<!-- ══ SERVICES PREVIEW ══ -->
+<section class="sec" id="services">
+  <div class="lbl">Full-Spectrum Print &amp; Build</div>
+  <h2 class="sh">Every material. <em>Your choice.</em></h2>
+  <p class="sd">We offer the full range — from conventional PVC and foamboard to sustainable Enboard and RPET. You choose what fits your brief, budget, and sustainability goals.<span style="display:block;margin-top:8px;font-size:13px;color:var(--g);font-weight:600">Other vendors make you choose a side. We don't. Conventional, hybrid, or fully Enboard — we're the one team that covers it all.</span></p>
+  <div class="sv-g">
+    <!-- Card 1 -->
+    <div class="sv">
+      <div class="ph sv-photo"><div class="ph-lab"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Service 01 · Printing<small>Photo of printed materials</small></div></div>
+      <div class="sv-body">
+        <div class="sv-n">01</div>
+        <div class="sv-badge sv-badge-conv">Conventional</div>
+        <div class="sv-name">Printing Solutions</div>
+        <p class="sv-d">High-resolution, Pantone-matched printing across all formats. What you approve is exactly what gets installed.</p>
+        <div class="sv-includes">Includes</div>
+        <ul class="sv-list">
+          <li>Posters &amp; banners</li>
+          <li>Stickers &amp; signage</li>
+          <li>Lightboxes</li>
+          <li>Pantone color matching</li>
+        </ul>
+        <a class="sv-upgrade-link" href="enboard.html">Eco alternative available — ask us about RPET fabric print →</a>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="sv">
+      <div class="ph sv-photo"><div class="ph-lab"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Service 02 · Cardboard<small>Photo of honeycomb build</small></div></div>
+      <div class="sv-body">
+        <div class="sv-n">02</div>
+        <div class="sv-badge sv-badge-eco">Sustainable</div>
+        <div class="sv-name">Enboard Structures</div>
+        <p class="sv-d">Our honeycomb cardboard system — the easiest swap you can make without touching your brand's visual standards. Screw-free, 48% faster to install, 90% recyclable. Looks identical to a plywood build. Costs you less in labour and teardown.</p>
+        <div class="sv-includes">Includes</div>
+        <ul class="sv-list">
+          <li>Booths &amp; backdrops</li>
+          <li>Entrance arches</li>
+          <li>Counters &amp; furniture</li>
+          <li>Logo structures &amp; props</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="sv">
+      <div class="ph sv-photo"><div class="ph-lab"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Service 03 · Retail<small>Photo of POSM in mall</small></div></div>
+      <div class="sv-body">
+        <div class="sv-n">03</div>
+        <div class="sv-badge sv-badge-hybrid">Hybrid-Ready</div>
+        <div class="sv-name">Retail &amp; Mall Displays</div>
+        <p class="sv-d">Category walls, POSM, kiosks and roadshow booths — designed, built, and installed at any mall in Malaysia. Mix conventional signage with Enboard feature pieces, no compromise on visual impact.</p>
+        <div class="sv-includes">Includes</div>
+        <ul class="sv-list">
+          <li>Mall activations &amp; roadshows</li>
+          <li>Product displays &amp; POSM</li>
+          <li>Pop-up kiosks</li>
+          <li>Nationwide installation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="sv-all-link">
+    <a href="services.html">View all services →</a>
+  </div>
+</section>
+
+<!-- ══ JOURNEY ══ -->
+<section class="sec" id="journey">
+  <div class="lbl">Your Path, Your Pace</div>
+  <h2 class="sh">Start with one piece. <em>Grow from there.</em></h2>
+  <p class="sd">You don't have to overhaul your entire event to make an impact. Most clients start with one sustainable swap — and build from there. Every stage moves your brand forward.</p>
+
+  <div class="journey-wrap">
+    <div class="journey-stage">
+      <div class="journey-stage-num">01</div>
+      <div class="journey-stage-tag journey-tag-1">Baby Step</div>
+      <div class="journey-stage-title">Replace one piece</div>
+      <p class="journey-stage-desc">Swap just your backdrop or entrance arch with Enboard. Keep everything else conventional. Zero risk — you'll see the quality firsthand before going further. Your stakeholders see the story. Your event looks identical.</p>
+      <div class="journey-example">
+        <strong>Real example</strong>
+        Cardboard backdrop + conventional PVC banners + standard foamboard signs. One event. One switch. A sustainability data report included.
+      </div>
+      <div class="journey-mix-bar">
+        <div class="mix-conv" style="flex:8"></div>
+        <div class="mix-eco" style="flex:2"></div>
+      </div>
+      <div class="journey-mix-label">
+        <span>85% conventional</span><span style="color:var(--g)">15% Sustainable</span>
+      </div>
+    </div>
+    <div class="journey-stage">
+      <div class="journey-stage-num">02</div>
+      <div class="journey-stage-tag journey-tag-2">Hybrid</div>
+      <div class="journey-stage-title">Mix &amp; match materials</div>
+      <p class="journey-stage-desc">High-visibility pieces go Enboard — backdrops, arches, furniture. High-volume items like stickers and small banners stay conventional. Best of both worlds, full visual impact, and a stronger sustainability story.</p>
+      <div class="journey-example">
+        <strong>Real example</strong>
+        Enboard entrance arch + Enboard backdrop + RPET fabric banner + conventional foamboard signs. 50/50 split. Identical visual impact.
+      </div>
+      <div class="journey-mix-bar">
+        <div class="mix-conv" style="flex:5"></div>
+        <div class="mix-eco" style="flex:5"></div>
+      </div>
+      <div class="journey-mix-label">
+        <span>50% conventional</span><span style="color:var(--g)">50% Sustainable</span>
+      </div>
+    </div>
+    <div class="journey-stage">
+      <div class="journey-stage-num">03</div>
+      <div class="journey-stage-tag journey-tag-3">Sustainable</div>
+      <div class="journey-stage-title">Go full Enboard</div>
+      <p class="journey-stage-desc">Enboard and RPET across every material. 50% less CO&#8322;, 90% recyclable, and a sustainability report your brand can submit directly to ESG stakeholders. We provide the data.</p>
+      <div class="journey-example">
+        <strong>Real example</strong>
+        Spirit of Sumatra (Airside) — 100% honeycomb cardboard across 5 zones, 9 interactive experiences. Internationally exhibited.
+      </div>
+      <div class="journey-mix-bar">
+        <div class="mix-conv" style="flex:1"></div>
+        <div class="mix-eco" style="flex:9"></div>
+      </div>
+      <div class="journey-mix-label">
+        <span>10% conventional</span><span style="color:var(--g)">90% Sustainable</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hybrid-cta-strip">
+    <div>
+      <div class="hybrid-cta-text">Not sure where to start? <em>Start with one piece.</em></div>
+      <div class="hybrid-cta-sub">Tell us about your next event. We'll recommend the one material swap that gives you the strongest sustainability story — and the numbers to back it up.</div>
+    </div>
+    <a class="btn-p" href="https://wa.me/60126216212" style="flex-shrink:0">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a10.9 10.9 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.883 0-3.644-.494-5.17-1.355l-.37-.22-3.822.997 1.02-3.717-.242-.383A9.96 9.96 0 012 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/></svg>
+      Plan My Event →
+    </a>
+  </div>
+</section>
+
+<!-- ══ ENBOARD TEASER ══ -->
+<section class="sec-nat">
+  <div class="lbl">Sustainable Structures</div>
+  <h2 class="sh">Meet Enboard. <em>Our biggest differentiator.</em></h2>
+  <p class="sd" style="margin-bottom:0">A honeycomb cardboard system that looks premium, prints beautifully, and installs faster than anything else we offer. The easiest first step a client has ever taken toward sustainable events.</p>
+  <div class="en-teaser">
+    <div class="en-teaser-body">
+      <div class="en-teaser-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+        Meet Enboard
+      </div>
+      <div class="en-teaser-h">Our sustainable honeycomb system — looks identical to conventional, installed in half the time.</div>
+      <div class="en-teaser-stats">
+        <div class="en-teaser-s"><div class="en-teaser-sn">48%</div><div class="en-teaser-sl">Faster install vs carpentry</div></div>
+        <div class="en-teaser-s"><div class="en-teaser-sn">90%</div><div class="en-teaser-sl">Recyclable after event</div></div>
+        <div class="en-teaser-s"><div class="en-teaser-sn">No screws</div><div class="en-teaser-sl">Slot-and-fit assembly</div></div>
+        <div class="en-teaser-s"><div class="en-teaser-sn">Lighter</div><div class="en-teaser-sl">Easier to ship &amp; handle</div></div>
+      </div>
+      <a class="btn-p" href="enboard.html">Explore Enboard →</a>
+    </div>
+    <div class="ph en-teaser-photo">
+      <div class="ph-lab">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Enboard · Product Photo
+        <small>Full booth or arch from a recent build</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="sec-g">
+  <div class="cta-inn">
+    <div class="lbl lbl-w" style="justify-content:center">Let's Talk</div>
+    <div class="cta-q">Your next event is a chance to do something <em style="font-style:italic;color:rgba(255,255,255,.9);border-bottom:2px solid rgba(255,255,255,.4)">worth showing off.</em></div>
+    <div class="cta-a">Synergy Arc International — printing, Enboard structures, and full installation across Malaysia. Start with a free sample or tell us your brief. No obligation, no pressure.</div>
+    <div class="cta-btns">
+      <a class="btn-wa" href="https://wa.me/60126216212">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        WhatsApp +6012-621 6212
+      </a>
+      <a class="btn-em" href="mailto:info@synergyarc.com.my">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        info@synergyarc.com.my
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft">
+    <div>
+      <div class="fb-lg"><b>SYNERGY</b> ARC International</div>
+      <div class="fb-tag">Full-range print and sustainable structures. Conventional, hybrid, or fully Enboard — we meet you where you are.</div>
+    </div>
+    <div class="fb-info">
+      <div class="fb-block">
+        <div class="fb-block-t">Mobile</div>
+        <div class="fb-block-v"><a href="https://wa.me/60126216212">+6012-621 6212</a></div>
+      </div>
+      <div class="fb-block">
+        <div class="fb-block-t">Tel</div>
+        <div class="fb-block-v">+(603) 6262 2260</div>
+      </div>
+      <div class="fb-block">
+        <div class="fb-block-t">Email</div>
+        <div class="fb-block-v"><a href="mailto:info@synergyarc.com.my">info@synergyarc.com.my</a></div>
+      </div>
+    </div>
+    <div class="fb-info">
+      <div class="fb-block">
+        <div class="fb-block-t">Office Address</div>
+        <div class="fb-block-v">B-3-10, Block B, Ativo Plaza<br>No.1, Jalan PJU 9/1, Damansara Avenue<br>Bandar Sri Damansara<br>52200 Kuala Lumpur, Malaysia</div>
+      </div>
+    </div>
+  </div>
+  <div class="fb-bot">
+    <span>© 2026 Synergy Arc International (M) Sdn Bhd (1622015-X)</span>
+    <span>In partnership with <a href="https://www.kooprint.hk" target="_blank" rel="noopener">KooPrint HK</a></span>
+  </div>
+</footer>
+
+<script>
+// ── Mobile menu ──
+function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
+function cmm(){document.getElementById('mob-menu').classList.remove('open')}
+document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))cmm()});
+
+// ── Marquee clone ──
+const mqt=document.getElementById('mqt');
+if(mqt){const cl=mqt.cloneNode(true);mqt.parentElement.appendChild(cl)}
+
+// ── Typewriter headline ──
+(function(){
+  const line1='Your event, installed on time.';
+  const i1=document.getElementById('tw-inner1'),i2=document.getElementById('tw-inner2'),i3=document.getElementById('tw-inner3'),cur=document.getElementById('tw-cursor');
+  if(!i1)return;
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    i1.textContent=line1;i1.style.transform='translateY(0)';i2.classList.add('revealed');i3.classList.add('revealed');cur.classList.add('hidden');return;
+  }
+  line1.split('').forEach(ch=>{
+    const s=document.createElement('span');
+    s.classList.add('tw-char');
+    s.textContent=ch===' '?' ':ch;
+    i1.appendChild(s);
+  });
+  const chars=i1.querySelectorAll('.tw-char');
+  const CHAR=55,PAUSE=300,L2=180,START=400;
+  setTimeout(()=>{
+    i1.style.transition='none';i1.style.transform='translateY(0)';
+    chars.forEach((c,idx)=>{
+      setTimeout(()=>{
+        c.classList.add('typed');
+        if(idx===chars.length-1){
+          setTimeout(()=>{
+            i2.classList.add('revealed');
+            cur.classList.add('hidden');
+            setTimeout(()=>i3.classList.add('revealed'),L2+300);
+          },PAUSE);
+        }
+      },idx*CHAR);
+    });
+  },START);
+})();
+</script>
+</body>
+</html>
