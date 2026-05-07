@@ -8,8 +8,182 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+/* ── Dark page override ── */
+html,body{background:#0B1F10!important;color:#fff}
+:root{
+  --bg:#0B1F10;--s1:rgba(255,255,255,.04);--wh:rgba(255,255,255,.07);
+  --ink:#0B1F10;/* keep dark so background:var(--ink) = dark */
+  --bdn:rgba(255,255,255,.10);--bd:rgba(0,191,99,.25);--gl:rgba(0,191,99,.10);
+}
+/* ── Canvas ── */
+#cv{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;pointer-events:none}
+/* ── Loading ── */
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:1000;background:#0B1F10;transition:opacity .8s ease}
+#loading.hidden{opacity:0;pointer-events:none}
+.ring{width:36px;height:36px;border-radius:50%;border:2.5px solid rgba(255,255,255,.12);border-top-color:#00BF63;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ring-txt{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);text-align:center;max-width:200px}
+/* ── Scroll hint ── */
+#scroll-hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:50;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .5s}
+#scroll-hint span{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.hint-arr{width:20px;height:20px;border-right:2px solid #00BF63;border-bottom:2px solid #00BF63;transform:rotate(45deg);animation:bounce 1.5s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(4px)}}
+/* ── HUD ── */
+#hud{position:fixed;bottom:30px;right:28px;z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.hud-chapter{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+#ch-num{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#00BF63}
+#ch-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.9)}
+#ch-meta{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.03em}
+.hud-counter .big{font-size:24px;font-weight:700;letter-spacing:-.04em;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.hud-progress{width:80px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.hud-progress .fill{height:100%;width:0%;background:#00BF63;border-radius:2px;transition:width .1s linear}
+.hud-progress .num{display:none}
+/* ── Glass nav ── */
+nav{background:rgba(11,31,16,.88)!important;border-bottom:1px solid rgba(255,255,255,.08)!important;z-index:500}
+.mob-menu{background:rgba(11,31,16,.97)!important;border-bottom:1px solid rgba(255,255,255,.08)!important;z-index:499}
+.mob-menu a{color:rgba(255,255,255,.8)!important;border-bottom-color:rgba(255,255,255,.08)!important}
+.nl-t{color:#fff!important}
+.nlinks a{color:rgba(255,255,255,.65)!important}
+.nlinks a:hover,.nlinks a.active{color:#00BF63!important}
+.mob span{background:rgba(255,255,255,.8)!important}
+/* ── Glass sections ── */
+.page-hero{margin:84px 5% 20px;background:rgba(255,255,255,.06);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.11);border-radius:28px;position:relative;z-index:10}
+.sec-nat,.sec{background:rgba(255,255,255,.05)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.09)!important;border-radius:28px!important;margin:20px 5%!important;position:relative;z-index:10}
+.sec-g{background:rgba(0,191,99,.10)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(0,191,99,.22)!important;border-radius:28px!important;margin:20px 5%!important;position:relative;z-index:10}
+footer{background:rgba(0,0,0,.28);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.07);position:relative;z-index:10}
+/* ── Text overrides ── */
+.sh{color:#fff!important}.sh em{color:#00BF63!important}
+.sd{color:rgba(255,255,255,.65)!important}.sd strong{color:#fff!important}
+.lbl{color:#00BF63!important}.lbl::before{background:#00BF63!important}
+.page-hero-lbl{color:#00BF63!important}
+.page-hero-h1{color:#fff!important}
+.page-hero-sub{color:rgba(255,255,255,.65)!important}
+.en-badge{color:#00BF63!important;background:rgba(0,191,99,.10)!important;border:1px solid rgba(0,191,99,.2)!important}
+.en-sn{color:#fff!important}.en-sl{color:rgba(255,255,255,.55)!important}
+.en-s{background:rgba(255,255,255,.04)!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:10px;padding:12px 14px}
+p{color:rgba(255,255,255,.65)}
+strong{color:rgba(255,255,255,.9)}
+/* ── Tables ── */
+table thead tr{background:rgba(255,255,255,.07)!important}
+table thead th{color:rgba(255,255,255,.65)!important}
+table thead th:last-child{background:#009E52!important;color:#fff!important}
+table tbody td{color:rgba(255,255,255,.75)!important;border-bottom-color:rgba(255,255,255,.07)!important}
+table tbody td[style*="color:var(--gd)"]{color:#00BF63!important}
+table tbody td[style*="color:#9CA3AF"]{color:rgba(255,255,255,.35)!important}
+table tbody td:last-child{background:rgba(0,191,99,.05)!important}
+table tbody tr:nth-child(odd){background:rgba(255,255,255,.02)!important}
+table tbody tr:nth-child(even){background:rgba(255,255,255,.04)!important}
+/* ── Cardboard comparison callouts ── */
+#cardboard-comparison [style*="background:var(--gl)"]{background:rgba(0,191,99,.08)!important;border-color:rgba(0,191,99,.25)!important}
+#cardboard-comparison [style*="background:var(--ink)"]{background:rgba(255,255,255,.06)!important}
+#cardboard-comparison [style*="background:var(--ink)"] > div:first-child{color:#00BF63!important}
+#cardboard-comparison [style*="background:var(--ink)"] p{color:rgba(255,255,255,.6)!important}
+#cardboard-comparison [style*="background:var(--ink)"] div[style*="font-size:16px"]{color:#fff!important}
+/* ReBoard callout */
+[style*="border:1.5px solid rgba(0,191,99"]{background:rgba(0,191,99,.07)!important}
+[style*="border:1.5px solid rgba(0,191,99"] p{color:rgba(255,255,255,.7)!important}
+/* ── Photo placeholders ── */
+.ph{background:rgba(255,255,255,.04)!important;border:1px solid rgba(255,255,255,.09)!important}
+.ph-lab{color:rgba(255,255,255,.35)!important}
+.ph-lab svg{stroke:rgba(255,255,255,.2)!important}
+/* ── Enboard sd callout span ── */
+.sd span[style*="background:rgba(0,191,99"]{background:rgba(0,191,99,.12)!important;border-left-color:#00BF63!important}
+.sd span strong[style*="color:var(--gd)"]{color:#00BF63!important;display:block;margin-bottom:3px}
+/* ── Impact calculator ── */
+.ic-card{background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.09)!important}
+.ic-section-label{color:rgba(255,255,255,.4)!important}
+.ic-event-title{color:#fff!important}
+.ic-hint{color:rgba(255,255,255,.45)!important}
+.ic-preset{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.10)!important;color:rgba(255,255,255,.7)!important}
+.ic-preset.active{border-color:#00BF63!important;background:rgba(0,191,99,.12)!important}
+.ic-preset-size{color:#fff!important}
+.ic-preset-label{color:rgba(255,255,255,.55)!important}
+.ic-mat{border-color:rgba(255,255,255,.08)!important}
+.ic-mat-name{color:#fff!important}
+.ic-mat-unit{color:rgba(255,255,255,.5)!important}
+.ic-mat-saves{color:rgba(255,255,255,.38)!important}
+.ic-mat-badge{background:rgba(0,191,99,.15)!important;color:#00BF63!important;border-color:rgba(0,191,99,.25)!important}
+.ic-mat-icon svg{stroke:rgba(255,255,255,.5)!important}
+.ic-slider{opacity:.85}
+.ic-level-title{color:rgba(255,255,255,.55)!important}
+.ic-level-seg{background:rgba(255,255,255,.12)!important}
+.ic-level-seg.lit{background:#00BF63!important}
+.ic-level-label{color:rgba(255,255,255,.38)!important}
+.ic-level-tag{color:rgba(255,255,255,.85)!important}
+.ic-metric-n{color:#fff!important}.ic-metric-n small{color:rgba(255,255,255,.5)!important}
+.ic-metric-label{color:rgba(255,255,255,.55)!important}
+.ic-track{background:rgba(255,255,255,.10)!important}
+.ic-fill{background:#00BF63!important}
+.ic-cta-row{border-top-color:rgba(255,255,255,.08)!important}
+.ic-cta-text{color:rgba(255,255,255,.75)!important}
+.ic-cta-text strong{color:#fff!important}
+.ic-disclaimer{color:rgba(255,255,255,.3)!important}
+/* ── Honeycomb ── */
+.hex-canvas-wrap{background:rgba(255,255,255,.03)!important;border-color:rgba(255,255,255,.07)!important}
+.hex-canvas-title{color:rgba(255,255,255,.5)!important}
+.hex-cell{stroke:rgba(255,255,255,.12)!important;fill:rgba(255,255,255,.03)!important}
+.hex-cell.filled{fill:#00BF63!important}
+.hex-label{fill:rgba(255,255,255,.6)!important}
+.hex-label.visible{fill:#fff!important}
+.hex-legend{border-top-color:rgba(255,255,255,.08)!important}
+.hex-legend-item{color:rgba(255,255,255,.5)!important}
+.hex-legend-dot{border-color:rgba(255,255,255,.2)!important}
+.hex-tooltip{background:rgba(11,31,16,.92)!important;color:rgba(255,255,255,.9)!important;border:1px solid rgba(255,255,255,.12)!important}
+/* ── CTA section ── */
+.cta-q{color:#fff!important}
+.cta-a{color:rgba(255,255,255,.65)!important}
+.lbl-w{color:#00BF63!important}
+.btn-em{background:rgba(255,255,255,.08)!important;color:rgba(255,255,255,.8)!important;border:1.5px solid rgba(255,255,255,.14)!important}
+.btn-em:hover{background:rgba(255,255,255,.12)!important}
+/* ── Footer ── */
+.fb-lg{color:#fff!important}.fb-tag{color:rgba(255,255,255,.5)!important}
+.fb-block-t{color:rgba(255,255,255,.38)!important}
+.fb-block-v{color:rgba(255,255,255,.8)!important}
+.fb-block-v a{color:rgba(255,255,255,.8)!important}
+.fb-block-v a:hover{color:#00BF63!important}
+.fb-bot{color:rgba(255,255,255,.35)!important;border-top-color:rgba(255,255,255,.07)!important}
+.fb-bot a{color:rgba(255,255,255,.5)!important}
+.fb-bot a:hover{color:#00BF63!important}
+/* ── Responsive ── */
+@media(max-width:760px){
+  .page-hero{margin:74px 3% 14px}
+  .sec-nat,.sec,.sec-g{margin:14px 3%!important}
+}
+</style>
 </head>
 <body>
+
+<!-- ══ 3D CANVAS (fixed background) ══ -->
+<canvas id="cv"></canvas>
+
+<!-- ══ LOADING SCREEN ══ -->
+<div id="loading">
+  <div class="ring"></div>
+  <div class="ring-txt">Preparing Enboard model</div>
+</div>
+
+<!-- ══ SCROLL HINT ══ -->
+<div id="scroll-hint">
+  <span>Scroll to assemble</span>
+  <div class="hint-arr"></div>
+</div>
+
+<!-- ══ HUD OVERLAY ══ -->
+<div id="hud">
+  <div class="hud-chapter">
+    <span id="ch-num">01</span>
+    <span id="ch-title">Flat-pack</span>
+    <span id="ch-meta">Loading model…</span>
+  </div>
+  <div class="hud-counter">
+    <div class="big">--</div>
+  </div>
+  <div class="hud-progress">
+    <div class="fill"></div>
+    <div class="num">00</div>
+  </div>
+</div>
 
 <!-- ══ NAVIGATION ══ -->
 <nav>
@@ -45,7 +219,7 @@
 <!-- ══ PAGE HERO ══ -->
 <div class="page-hero">
   <div class="page-hero-lbl">Sustainable Structures</div>
-  <h1 class="page-hero-h1"><em>Enboard.</em><br><span style="font-style:normal;font-size:clamp(24px,3vw,40px);color:rgba(255,255,255,.8);font-weight:400">Looks premium. Performs better.</span></h1>
+  <h1 class="page-hero-h1"><em>Enboard.</em><br><span style="font-style:normal;font-size:clamp(24px,3vw,40px);color:rgba(255,255,255,.75);font-weight:400">Looks premium. Performs better.</span></h1>
   <p class="page-hero-sub">Our honeycomb cardboard system — the easiest sustainable swap you can make without changing a single thing about how your event looks. Screw-free, 48% faster to install, 90% recyclable.</p>
   <a class="btn-p" href="https://wa.me/60126216212">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.526 5.855L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
@@ -57,7 +231,7 @@
 <section class="sec-nat" id="enboard">
   <div class="lbl">Enboard — Your First Step</div>
   <h2 class="sh">Looks premium. <em>Prints beautifully.</em> Builds in half the time.</h2>
-  <p class="sd">Enboard is our honeycomb cardboard system — the easiest sustainable swap you can make without touching your brand's visual standards.<span style="display:block;margin-top:10px;padding:12px 16px;background:rgba(0,191,99,.08);border-left:3px solid var(--g);border-radius:0 10px 10px 0;font-size:13px;color:var(--ink);line-height:1.7"><strong style="color:var(--gd);display:block;margin-bottom:3px">The most common first hybrid swap:</strong>Replace your backdrop with Enboard. Keep your PVC banners and foamboard signs. Your event looks identical — but you've just saved the equivalent of 384 plastic bottles and cut your install time by nearly half.</span></p>
+  <p class="sd">Enboard is our honeycomb cardboard system — the easiest sustainable swap you can make without touching your brand's visual standards.<span style="display:block;margin-top:10px;padding:12px 16px;background:rgba(0,191,99,.10);border-left:3px solid #00BF63;border-radius:0 10px 10px 0;font-size:13px;color:rgba(255,255,255,.75);line-height:1.7"><strong style="color:#00BF63;display:block;margin-bottom:3px">The most common first hybrid swap:</strong>Replace your backdrop with Enboard. Keep your PVC banners and foamboard signs. Your event looks identical — but you've just saved the equivalent of 384 plastic bottles and cut your install time by nearly half.</span></p>
   <div class="en-wrap">
     <div>
       <div class="en-photo-main ph">
@@ -77,7 +251,7 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
         Why Choose Enboard
       </div>
-      <p style="font-size:14.5px;color:var(--mt);line-height:1.7">No screws. No drilling. Pieces slot together like a puzzle — setup is faster, nothing gets damaged, and after the event the cardboard goes straight back into the recycling stream.</p>
+      <p style="font-size:14.5px;color:rgba(255,255,255,.62);line-height:1.7">No screws. No drilling. Pieces slot together like a puzzle — setup is faster, nothing gets damaged, and after the event the cardboard goes straight back into the recycling stream.</p>
       <div class="en-stats">
         <div class="en-s"><div class="en-sn">No screws</div><div class="en-sl">Slot-and-fit assembly, no tools needed</div></div>
         <div class="en-s"><div class="en-sn">Faster setup</div><div class="en-sl">Smaller crew, shorter hours, lower labour cost</div></div>
@@ -91,9 +265,9 @@
         <svg class="hex-svg" id="hex-svg" viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg"></svg>
         <div class="hex-tooltip" id="hex-tooltip"></div>
         <div class="hex-legend">
-          <div class="hex-legend-item"><div class="hex-legend-dot" style="background:var(--g)"></div>Assembled</div>
-          <div class="hex-legend-item"><div class="hex-legend-dot" style="background:#F3F8F0;border:1px solid rgba(0,191,99,.3)"></div>Awaiting</div>
-          <div class="hex-legend-item" style="margin-left:auto;font-size:11px;color:var(--g);font-weight:700" id="hex-pct">0% assembled</div>
+          <div class="hex-legend-item"><div class="hex-legend-dot" style="background:#00BF63"></div>Assembled</div>
+          <div class="hex-legend-item"><div class="hex-legend-dot" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)"></div>Awaiting</div>
+          <div class="hex-legend-item" style="margin-left:auto;font-size:11px;color:#00BF63;font-weight:700" id="hex-pct">0% assembled</div>
         </div>
       </div>
     </div>
@@ -109,72 +283,32 @@
   <div style="overflow-x:auto;margin-bottom:36px">
     <table style="width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px">
       <thead>
-        <tr style="background:var(--ink)">
-          <th style="padding:14px 18px;text-align:left;font-weight:600;color:rgba(255,255,255,.6);border-radius:12px 0 0 0;font-size:11px;letter-spacing:.06em;text-transform:uppercase"></th>
-          <th style="padding:14px 18px;text-align:center;font-weight:600;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.06em;text-transform:uppercase">Corrugated Board</th>
-          <th style="padding:14px 18px;text-align:center;font-weight:600;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.06em;text-transform:uppercase">Standard Honeycomb</th>
-          <th style="padding:14px 18px;text-align:center;font-weight:700;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--gd);border-radius:0 12px 0 0">Enboard Honeycomb</th>
+        <tr>
+          <th style="padding:14px 18px;text-align:left;font-weight:600;color:rgba(255,255,255,.5);border-radius:12px 0 0 0;font-size:11px;letter-spacing:.06em;text-transform:uppercase"></th>
+          <th style="padding:14px 18px;text-align:center;font-weight:600;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.06em;text-transform:uppercase">Corrugated Board</th>
+          <th style="padding:14px 18px;text-align:center;font-weight:600;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.06em;text-transform:uppercase">Standard Honeycomb</th>
+          <th style="padding:14px 18px;text-align:center;font-weight:700;color:#fff;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:#009E52;border-radius:0 12px 0 0">Enboard Honeycomb</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="background:var(--wh)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Thickness options</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">3–5mm</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Varies, often thin</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">5mm / 10mm / 16mm</td>
-        </tr>
-        <tr style="background:var(--s1)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Structural strength</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Low — bends easily</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Fragile — weak at joints</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">High — solid and rigid</td>
-        </tr>
-        <tr style="background:var(--wh)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Pieces needed per item</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Many — layers required</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Many — poor load distribution</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">Fewer — efficient construction</td>
-        </tr>
-        <tr style="background:var(--s1)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Print surface quality</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Rough, limited finish</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Inconsistent</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">Smooth, Pantone-accurate print</td>
-        </tr>
-        <tr style="background:var(--wh)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Assembly method</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Glue-heavy, messy</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Glue or tape</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">Slot-and-fit, no tools</td>
-        </tr>
-        <tr style="background:var(--s1)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Comparable product tier</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Budget packaging</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt);border-bottom:1px solid var(--bdn)">Budget display</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">Lower range of ReBoard — more solid</td>
-        </tr>
-        <tr style="background:var(--wh)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-bottom:1px solid var(--bdn);font-size:13px">Suitable for furniture &amp; booths</td>
-          <td style="padding:13px 18px;text-align:center;color:#9CA3AF;border-bottom:1px solid var(--bdn)">No</td>
-          <td style="padding:13px 18px;text-align:center;color:#9CA3AF;border-bottom:1px solid var(--bdn)">No</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;border-bottom:1px solid var(--bd);background:rgba(0,191,99,.04)">Yes</td>
-        </tr>
-        <tr style="background:var(--s1)">
-          <td style="padding:13px 18px;color:var(--ink);font-weight:600;border-radius:0 0 0 12px;font-size:13px">Recyclable</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt)">Yes</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--mt)">Yes</td>
-          <td style="padding:13px 18px;text-align:center;color:var(--gd);font-weight:700;background:rgba(0,191,99,.04);border-radius:0 0 12px 0">Yes</td>
-        </tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Thickness options</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">3–5mm</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Varies, often thin</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">5mm / 10mm / 16mm</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Structural strength</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Low — bends easily</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Fragile — weak at joints</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">High — solid and rigid</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Pieces needed per item</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Many — layers required</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Many — poor load distribution</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">Fewer — efficient construction</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Print surface quality</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Rough, limited finish</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Inconsistent</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">Smooth, Pantone-accurate print</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Assembly method</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Glue-heavy, messy</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Glue or tape</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">Slot-and-fit, no tools</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Comparable product tier</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Budget packaging</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.07)">Budget display</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">Lower range of ReBoard — more solid</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px">Suitable for furniture &amp; booths</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.07)">No</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.07)">No</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;border-bottom:1px solid rgba(0,191,99,.2);background:rgba(0,191,99,.05)">Yes</td></tr>
+        <tr><td style="padding:13px 18px;color:rgba(255,255,255,.9);font-weight:600;border-radius:0 0 0 12px;font-size:13px">Recyclable</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55)">Yes</td><td style="padding:13px 18px;text-align:center;color:rgba(255,255,255,.55)">Yes</td><td style="padding:13px 18px;text-align:center;color:#00BF63;font-weight:700;background:rgba(0,191,99,.05);border-radius:0 0 12px 0">Yes</td></tr>
       </tbody>
     </table>
   </div>
 
-  <div style="background:var(--gl);border:1.5px solid rgba(0,191,99,.2);border-radius:16px;padding:24px 28px;margin-bottom:40px">
-    <p style="font-size:14px;color:var(--ink);line-height:1.75">The closest international benchmark for Enboard is <strong>ReBoard</strong> — a premium sustainable board used in high-end retail and exhibition globally. Enboard sits at ReBoard's entry level in terms of price, but matches or exceeds it in structural rigidity for event applications. It is a fundamentally different product from the corrugated cardboard your printer uses for shipping boxes.</p>
+  <div style="background:rgba(0,191,99,.08);border:1.5px solid rgba(0,191,99,.22);border-radius:16px;padding:24px 28px;margin-bottom:40px">
+    <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.75">The closest international benchmark for Enboard is <strong style="color:#fff">ReBoard</strong> — a premium sustainable board used in high-end retail and exhibition globally. Enboard sits at ReBoard's entry level in terms of price, but matches or exceeds it in structural rigidity for event applications. It is a fundamentally different product from the corrugated cardboard your printer uses for shipping boxes.</p>
   </div>
 
-  <div style="display:grid;grid-template-columns:auto 1fr;gap:24px 32px;align-items:start;background:var(--ink);border-radius:18px;padding:32px 36px">
-    <div style="font-size:clamp(40px,5vw,64px);font-weight:700;color:var(--g);line-height:1;letter-spacing:-.03em;white-space:nowrap">16mm</div>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:24px 32px;align-items:start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:32px 36px">
+    <div style="font-size:clamp(40px,5vw,64px);font-weight:700;color:#00BF63;line-height:1;letter-spacing:-.03em;white-space:nowrap">16mm</div>
     <div>
       <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-.01em">The thickness difference is the whole story.</div>
       <p style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.75;margin:0">Corrugated board at 3–5mm means you need multiple layers bonded together to achieve any structural depth — more material, more labour, more failure points. Enboard comes in 5mm, 10mm, and 16mm single panels. One piece does the job that would take three corrugated layers to attempt. For furniture, counters, booth walls, and arches — that efficiency is the difference between a build that works and one that doesn't.</p>
@@ -189,80 +323,45 @@
   <p class="sd">Adjust the materials below — see exactly what switching to Synergy Arc's sustainable alternatives saves. Every number maps to a real material swap we can make for your next activation.</p>
 
   <div class="impact-calc">
-
     <!-- LEFT: CONTROLS -->
     <div class="ic-card">
       <div class="ic-section-label">Event scale</div>
       <div class="ic-event-title">How big is your activation?</div>
       <div class="ic-presets">
-        <button class="ic-preset" data-preset="small">
-          <span class="ic-preset-size">&#8804;36 m&#178;</span>
-          <span class="ic-preset-label">Small booth</span>
-        </button>
-        <button class="ic-preset active" data-preset="medium">
-          <span class="ic-preset-size">60 m&#178;</span>
-          <span class="ic-preset-label">Roadshow</span>
-        </button>
-        <button class="ic-preset" data-preset="large">
-          <span class="ic-preset-size">150 m&#178;</span>
-          <span class="ic-preset-label">Activation</span>
-        </button>
-        <button class="ic-preset" data-preset="mega">
-          <span class="ic-preset-size">300 m&#178;</span>
-          <span class="ic-preset-label">Mega event</span>
-        </button>
+        <button class="ic-preset" data-preset="small"><span class="ic-preset-size">&#8804;36 m&#178;</span><span class="ic-preset-label">Small booth</span></button>
+        <button class="ic-preset active" data-preset="medium"><span class="ic-preset-size">60 m&#178;</span><span class="ic-preset-label">Roadshow</span></button>
+        <button class="ic-preset" data-preset="large"><span class="ic-preset-size">150 m&#178;</span><span class="ic-preset-label">Activation</span></button>
+        <button class="ic-preset" data-preset="mega"><span class="ic-preset-size">300 m&#178;</span><span class="ic-preset-label">Mega event</span></button>
       </div>
-
       <div class="ic-section-label">Materials to replace</div>
       <p class="ic-hint">Quantities are pre-filled based on typical Malaysian event setups. Adjust to match your brief.</p>
-
-      <!-- Plywood -->
       <div class="ic-mat">
         <div class="ic-mat-head">
           <div class="ic-mat-info">
-            <div class="ic-mat-icon">
-              <svg viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="13" rx="2"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/><line x1="12" y1="13" x2="12" y2="16"/></svg>
-            </div>
-            <div>
-              <div class="ic-mat-name">Plywood panels</div>
-              <div class="ic-mat-unit">2440 × 1220 mm sheets, 18 mm</div>
-            </div>
+            <div class="ic-mat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="13" rx="2"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/><line x1="12" y1="13" x2="12" y2="16"/></svg></div>
+            <div><div class="ic-mat-name">Plywood panels</div><div class="ic-mat-unit">2440 × 1220 mm sheets, 18 mm</div></div>
           </div>
           <div class="ic-mat-badge" id="ic-v-ply">8 sheets</div>
         </div>
         <input class="ic-slider" type="range" id="ic-ply" min="0" max="80" value="8" step="1">
         <div class="ic-mat-saves">120 plastic bottle equivalents saved per sheet → replaced with Enboard honeycomb</div>
       </div>
-
-      <!-- Inkjet sticker -->
       <div class="ic-mat">
         <div class="ic-mat-head">
           <div class="ic-mat-info">
-            <div class="ic-mat-icon">
-              <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-            </div>
-            <div>
-              <div class="ic-mat-name">PVC inkjet stickers</div>
-              <div class="ic-mat-unit">total area in m&#178;</div>
-            </div>
+            <div class="ic-mat-icon"><svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
+            <div><div class="ic-mat-name">PVC inkjet stickers</div><div class="ic-mat-unit">total area in m&#178;</div></div>
           </div>
           <div class="ic-mat-badge" id="ic-v-stk">25 m&#178;</div>
         </div>
         <input class="ic-slider" type="range" id="ic-stk" min="0" max="250" value="25" step="1">
         <div class="ic-mat-saves">12 plastic bottle equivalents per m&#178; → switched to eco-solvent or latex print</div>
       </div>
-
-      <!-- Foamboard -->
       <div class="ic-mat">
         <div class="ic-mat-head">
           <div class="ic-mat-info">
-            <div class="ic-mat-icon">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-            </div>
-            <div>
-              <div class="ic-mat-name">Foamboard + sticker panels</div>
-              <div class="ic-mat-unit">display boards, approx. A1 size</div>
-            </div>
+            <div class="ic-mat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+            <div><div class="ic-mat-name">Foamboard + sticker panels</div><div class="ic-mat-unit">display boards, approx. A1 size</div></div>
           </div>
           <div class="ic-mat-badge" id="ic-v-fbm">10 panels</div>
         </div>
@@ -274,7 +373,6 @@
     <!-- RIGHT: RESULTS -->
     <div class="ic-card">
       <div class="ic-section-label">Estimated savings if you switch</div>
-
       <div class="ic-level-wrap">
         <div class="ic-level-title">Sustainability level</div>
         <div class="ic-level-bar">
@@ -301,7 +399,6 @@
         </div>
         <div class="ic-track"><div class="ic-fill" id="ic-fill-bottles" style="width:10%"></div></div>
       </div>
-
       <div class="ic-metric">
         <div class="ic-metric-top">
           <div class="ic-metric-n" id="ic-co2">63<small>kg</small></div>
@@ -309,7 +406,6 @@
         </div>
         <div class="ic-track"><div class="ic-fill" id="ic-fill-co2" style="width:10%"></div></div>
       </div>
-
       <div class="ic-metric">
         <div class="ic-metric-top">
           <div class="ic-metric-n" id="ic-landfill">207<small>kg</small></div>
@@ -317,17 +413,14 @@
         </div>
         <div class="ic-track"><div class="ic-fill" id="ic-fill-landfill" style="width:8%"></div></div>
       </div>
-
       <div class="ic-cta-row">
         <div class="ic-cta-text">Ready to make your <strong>next event</strong> this green?</div>
         <a class="btn-p" href="https://wa.me/60126216212" style="padding:11px 22px;font-size:13px;white-space:nowrap">Get a quote →</a>
       </div>
-
       <div class="ic-disclaimer">
         <strong>*</strong> Figures are indicative, derived from average material weights and published lifecycle CO&#8322; data (ICE Database v3, WRAP, U.S. EPA) cross-referenced with Synergy Arc's internal material benchmarks. Actual savings vary by material grade, thickness, event duration, and local recycling infrastructure. Not for use in formal ESG or carbon reporting without independent verification.
       </div>
     </div>
-
   </div>
 </section>
 
@@ -335,7 +428,7 @@
 <section class="sec-g">
   <div class="cta-inn">
     <div class="lbl lbl-w" style="justify-content:center">Let's Talk</div>
-    <div class="cta-q">One piece is all it takes to start a <em style="font-style:italic;color:rgba(255,255,255,.9);border-bottom:2px solid rgba(255,255,255,.4)">different kind of event.</em></div>
+    <div class="cta-q">One piece is all it takes to start a <em style="font-style:italic;color:rgba(255,255,255,.9);border-bottom:2px solid rgba(255,255,255,.35)">different kind of event.</em></div>
     <div class="cta-a">Synergy Arc International — Malaysia's sustainable print and Enboard production partner. Request a free sample and feel the material before you commit to anything.</div>
     <div class="cta-btns">
       <a class="btn-wa" href="https://wa.me/60126216212">
@@ -358,18 +451,9 @@
       <div class="fb-tag">Full-range print and sustainable structures. Conventional, hybrid, or fully Enboard — we meet you where you are.</div>
     </div>
     <div class="fb-info">
-      <div class="fb-block">
-        <div class="fb-block-t">Mobile</div>
-        <div class="fb-block-v"><a href="https://wa.me/60126216212">+6012-621 6212</a></div>
-      </div>
-      <div class="fb-block">
-        <div class="fb-block-t">Tel</div>
-        <div class="fb-block-v">+(603) 6262 2260</div>
-      </div>
-      <div class="fb-block">
-        <div class="fb-block-t">Email</div>
-        <div class="fb-block-v"><a href="mailto:info@synergyarc.com.my">info@synergyarc.com.my</a></div>
-      </div>
+      <div class="fb-block"><div class="fb-block-t">Mobile</div><div class="fb-block-v"><a href="https://wa.me/60126216212">+6012-621 6212</a></div></div>
+      <div class="fb-block"><div class="fb-block-t">Tel</div><div class="fb-block-v">+(603) 6262 2260</div></div>
+      <div class="fb-block"><div class="fb-block-t">Email</div><div class="fb-block-v"><a href="mailto:info@synergyarc.com.my">info@synergyarc.com.my</a></div></div>
     </div>
     <div class="fb-info">
       <div class="fb-block">
@@ -384,26 +468,26 @@
   </div>
 </footer>
 
+<!-- ══ SCRIPTS ══ -->
+<script src="three.min.js"></script>
+<script src="chair-geom.js"></script>
 <script>
 // ── Mobile menu ──
 function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
 function cmm(){document.getElementById('mob-menu').classList.remove('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))cmm()});
 
+// ── Safety timeout: hide loading if model stalls ──
+setTimeout(()=>{
+  const ld=document.getElementById('loading');
+  if(ld&&!ld.classList.contains('hidden')){ld.classList.add('hidden');setTimeout(()=>{if(ld.parentNode)ld.remove();},900);}
+},15000);
+
 // ── Impact Calculator ──
 (function(){
-  const MAT={
-    ply:{bpu:120,co2pu:6.0,lfpu:25.0,max:80},
-    stk:{bpu:12,co2pu:0.6,lfpu:0.2,max:250},
-    fbm:{bpu:18,co2pu:0.9,lfpu:0.75,max:150},
-  };
+  const MAT={ply:{bpu:120,co2pu:6.0,lfpu:25.0,max:80},stk:{bpu:12,co2pu:0.6,lfpu:0.2,max:250},fbm:{bpu:18,co2pu:0.9,lfpu:0.75,max:150}};
   const MAX_B=12000,MAX_C=600,MAX_L=2500;
-  const PRESETS={
-    small:{ply:3,stk:8,fbm:4},
-    medium:{ply:8,stk:25,fbm:10},
-    large:{ply:20,stk:60,fbm:25},
-    mega:{ply:50,stk:150,fbm:60},
-  };
+  const PRESETS={small:{ply:3,stk:8,fbm:4},medium:{ply:8,stk:25,fbm:10},large:{ply:20,stk:60,fbm:25},mega:{ply:50,stk:150,fbm:60}};
   const LEVELS=[
     {min:0,segs:0,tag:'Move the sliders above to see your impact'},
     {min:150,segs:1,tag:'Minimal — a small first step'},
@@ -425,9 +509,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   }
   function calc(){
     const p=+slPly.value,s=+slStk.value,f=+slFbm.value;
-    vPly.textContent=p+' sheet'+(p===1?'':'s');
-    vStk.textContent=s+' m²';
-    vFbm.textContent=f+' panel'+(f===1?'':'s');
+    vPly.textContent=p+' sheet'+(p===1?'':'s');vStk.textContent=s+' m²';vFbm.textContent=f+' panel'+(f===1?'':'s');
     setPct(slPly,MAT.ply.max);setPct(slStk,MAT.stk.max);setPct(slFbm,MAT.fbm.max);
     const bottles=p*MAT.ply.bpu+s*MAT.stk.bpu+f*MAT.fbm.bpu;
     const co2=p*MAT.ply.co2pu+s*MAT.stk.co2pu+f*MAT.fbm.co2pu;
@@ -435,24 +517,17 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
     flash(document.getElementById('ic-bottles'),bottles.toLocaleString());
     flash(document.getElementById('ic-co2'),Math.round(co2).toLocaleString()+'<small>kg</small>');
     flash(document.getElementById('ic-landfill'),Math.round(landfill).toLocaleString()+'<small>kg</small>');
-    setBar('ic-fill-bottles',bottles,MAX_B);
-    setBar('ic-fill-co2',co2,MAX_C);
-    setBar('ic-fill-landfill',landfill,MAX_L);
+    setBar('ic-fill-bottles',bottles,MAX_B);setBar('ic-fill-co2',co2,MAX_C);setBar('ic-fill-landfill',landfill,MAX_L);
     setLevel(bottles);
   }
   document.querySelectorAll('.ic-preset').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.querySelectorAll('.ic-preset').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      const p=PRESETS[btn.dataset.preset];
-      slPly.value=p.ply;slStk.value=p.stk;slFbm.value=p.fbm;
-      calc();
+      const p=PRESETS[btn.dataset.preset];slPly.value=p.ply;slStk.value=p.stk;slFbm.value=p.fbm;calc();
     });
   });
-  [slPly,slStk,slFbm].forEach(s=>s.addEventListener('input',()=>{
-    document.querySelectorAll('.ic-preset').forEach(b=>b.classList.remove('active'));
-    calc();
-  }));
+  [slPly,slStk,slFbm].forEach(s=>s.addEventListener('input',()=>{document.querySelectorAll('.ic-preset').forEach(b=>b.classList.remove('active'));calc();}));
   calc();
 })();
 
@@ -503,6 +578,299 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   function startFilling(){if(animating)return;animating=true;let d=0;for(let i=0;i<cells.length;i++){setTimeout(fillNext,d);d+=80}}
   const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){setTimeout(startFilling,200);obs.disconnect()}})},{threshold:0.3});
   obs.observe(svg);
+})();
+
+// ── 3D Scene: MC 205 scroll-driven self-assembly ──
+(async function(){
+  'use strict';
+  if(typeof THREE === 'undefined'){
+    console.warn('Three.js not loaded — 3D model disabled');
+    const ld=document.getElementById('loading');
+    if(ld){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}
+    return;
+  }
+
+  const canvas=document.getElementById('cv');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000,0);
+
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(38,1,0.01,100);
+
+  function resize(){
+    renderer.setSize(window.innerWidth,window.innerHeight,false);
+    cam.aspect=window.innerWidth/window.innerHeight;
+    cam.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  scene.add(new THREE.AmbientLight(0xfff5e6,0.55));
+  const key=new THREE.DirectionalLight(0xfff2dc,1.05);
+  key.position.set(4,8,5);key.castShadow=true;
+  key.shadow.mapSize.set(2048,2048);
+  key.shadow.camera.near=0.1;key.shadow.camera.far=24;
+  key.shadow.camera.left=-3;key.shadow.camera.right=3;
+  key.shadow.camera.top=3;key.shadow.camera.bottom=-3;
+  key.shadow.bias=-0.0005;
+  scene.add(key);
+  const fill=new THREE.DirectionalLight(0xc9d8e8,0.32);
+  fill.position.set(-4,3,-3);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffe5cc,0.4);
+  rim.position.set(0,2,-5);scene.add(rim);
+
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.ShadowMaterial({opacity:0.18}));
+  floor.rotation.x=-Math.PI/2;floor.position.y=-1.0;
+  floor.receiveShadow=true;scene.add(floor);
+
+  const matFace=new THREE.MeshStandardMaterial({color:0xf5f1e8,roughness:0.55,metalness:0.0});
+  const matCore=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
+
+  let data;
+  if(window.__CHAIR_GEOM){
+    data=window.__CHAIR_GEOM;
+  } else {
+    const setStatus=msg=>{const el=document.querySelector('.ring-txt');if(el)el.textContent=msg;};
+    setStatus('Decoding model...');
+    const b64=window.__CHAIR_GEOM_B64;
+    if(!b64){
+      setStatus('Model unavailable');
+      const ld=document.getElementById('loading');
+      if(ld){setTimeout(()=>{ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);},1500);}
+      return;
+    }
+    const CHUNK_SIZE=65536;
+    let padding=0;
+    if(b64[b64.length-1]==='=')padding++;
+    if(b64[b64.length-2]==='=')padding++;
+    const byteLen=(b64.length*3/4)-padding;
+    const bytes=new Uint8Array(byteLen);
+    let offset=0;
+    await new Promise(resolve=>{
+      let pos=0;
+      function nextChunk(){
+        const end=Math.min(pos+CHUNK_SIZE,b64.length);
+        const slice=b64.slice(pos,end);
+        const bin=atob(slice);
+        for(let i=0;i<bin.length;i++)bytes[offset++]=bin.charCodeAt(i);
+        pos=end;
+        if(pos<b64.length){setTimeout(nextChunk,0);}else{resolve();}
+      }
+      nextChunk();
+    });
+    setStatus('Decompressing...');
+    let inflated;
+    try{
+      if(typeof DecompressionStream!=='undefined'){
+        const ds=new DecompressionStream('gzip');
+        const w=ds.writable.getWriter();
+        const r=ds.readable.getReader();
+        w.write(bytes.slice(0,offset));w.close();
+        const chunks=[];let total=0;
+        while(true){const {done,value}=await r.read();if(done)break;chunks.push(value);total+=value.length;}
+        inflated=new Uint8Array(total);let off=0;
+        for(const c of chunks){inflated.set(c,off);off+=c.length;}
+      } else {throw new Error('DecompressionStream not available');}
+    } catch(e){
+      if(window.__CHAIR_GEOM_RAW){data=window.__CHAIR_GEOM_RAW;window.__CHAIR_GEOM=data;}
+      else{data=[];}
+      inflated=null;
+    }
+    if(inflated){
+      setStatus('Parsing model...');
+      await new Promise(resolve=>setTimeout(resolve,0));
+      const jsonStr=new TextDecoder().decode(inflated);
+      data=JSON.parse(jsonStr);
+      window.__CHAIR_GEOM=data;
+    }
+    setStatus('Building scene...');
+  }
+
+  // Bounds
+  let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
+  for(const m of data){for(let i=0;i<m.v.length;i+=3){for(let k=0;k<3;k++){const x=m.v[i+k];if(x<lo[k])lo[k]=x;if(x>hi[k])hi[k]=x;}}}
+  const size=[hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2]];
+  const longest=Math.max(...size);
+  const SCALE=1.4/longest;
+  const CX=(lo[0]+hi[0])/2,CY=(lo[1]+hi[1])/2;
+
+  const chairRoot=new THREE.Group();
+  scene.add(chairRoot);
+  const parts=[];
+
+  for(const m of data){
+    if(!m.v.length||!m.f.length)continue;
+    const geo=new THREE.BufferGeometry();
+    const verts=new Float32Array(m.v.length);
+    let cx=0,cy=0,cz=0,n=m.v.length/3;
+    for(let i=0;i<m.v.length;i+=3){
+      const x=(m.v[i]-CX)*SCALE;
+      const y=(m.v[i+1]-CY)*SCALE;
+      const z=(m.v[i+2]-lo[2])*SCALE;
+      verts[i]=x;verts[i+1]=z;verts[i+2]=-y;
+      cx+=verts[i];cy+=verts[i+1];cz+=verts[i+2];
+    }
+    cx/=n;cy/=n;cz/=n;
+    geo.setAttribute('position',new THREE.BufferAttribute(verts,3));
+    geo.setIndex(new THREE.BufferAttribute(new Uint32Array(m.f),1));
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    const bb=geo.boundingBox;
+    const dx=bb.max.x-bb.min.x,dy=bb.max.y-bb.min.y,dz=bb.max.z-bb.min.z;
+    const dims=[dx,dy,dz];
+    let thinAxis=0;for(let k=1;k<3;k++)if(dims[k]<dims[thinAxis])thinAxis=k;
+    const idx=geo.index.array;
+    const pos=geo.attributes.position.array;
+    const groups=[];let curMat=-1,curStart=0;
+    const tmpA=new THREE.Vector3(),tmpB=new THREE.Vector3(),tmpC=new THREE.Vector3();
+    const nrm=new THREE.Vector3(),edge1=new THREE.Vector3(),edge2=new THREE.Vector3();
+    for(let t=0;t<idx.length;t+=3){
+      const a=idx[t]*3,b=idx[t+1]*3,c=idx[t+2]*3;
+      tmpA.set(pos[a],pos[a+1],pos[a+2]);tmpB.set(pos[b],pos[b+1],pos[b+2]);tmpC.set(pos[c],pos[c+1],pos[c+2]);
+      edge1.subVectors(tmpB,tmpA);edge2.subVectors(tmpC,tmpA);nrm.crossVectors(edge1,edge2).normalize();
+      const dot=Math.abs(nrm.getComponent(thinAxis));
+      const mat=dot>0.7?0:1;
+      if(mat!==curMat){if(curMat!==-1)groups.push({start:curStart,count:t-curStart,materialIndex:curMat});curStart=t;curMat=mat;}
+    }
+    if(curMat!==-1)groups.push({start:curStart,count:idx.length-curStart,materialIndex:curMat});
+    for(const g of groups)geo.addGroup(g.start,g.count,g.materialIndex);
+    const mesh=new THREE.Mesh(geo,[matFace,matCore]);
+    mesh.castShadow=true;mesh.receiveShadow=true;
+    geo.translate(-cx,-cy,-cz);
+    const group=new THREE.Group();
+    group.add(mesh);
+    group.position.set(cx,cy,cz);
+    group.userData.target=group.position.clone();
+    group.userData.name=m.name;
+    chairRoot.add(group);
+    parts.push(group);
+  }
+
+  chairRoot.position.y=-0.55;
+
+  const yParts=[],zParts=[];
+  for(const p of parts){
+    const bb=new THREE.Box3().setFromObject(p);
+    const sx=bb.max.x-bb.min.x,sz=bb.max.z-bb.min.z;
+    (sx<sz?yParts:zParts).push(p);
+  }
+  yParts.sort((a,b)=>a.userData.target.x-b.userData.target.x);
+  zParts.sort((a,b)=>a.userData.target.z-b.userData.target.z);
+
+  function setStart(p,kind,k,total){
+    const angle=(k/total)*Math.PI*1.8+(kind==='Y'?0.2:-0.4);
+    const radius=(kind==='Y'?1.7:1.5)+((k*13)%7)*0.05;
+    p.userData.start={
+      pos:new THREE.Vector3(Math.cos(angle)*radius,kind==='Y'?-0.7+((k*17)%5)*0.02:1.6+k*0.05,Math.sin(angle)*radius*0.9+(kind==='Z'?-0.5:0)),
+      rot:new THREE.Euler(kind==='Y'?-Math.PI/2+((k*7)%5)*0.04:((k*5)%7)*0.04,((k*11)%7)*0.06,((k*7)%5)*0.05)
+    };
+  }
+  yParts.forEach((p,k)=>setStart(p,'Y',k,yParts.length));
+  zParts.forEach((p,k)=>setStart(p,'Z',k,zParts.length));
+  function applyStart(p){p.position.copy(p.userData.start.pos);p.rotation.copy(p.userData.start.rot);}
+  parts.forEach(applyStart);
+
+  const order=[];
+  const yMid=Math.floor(yParts.length/2);
+  const zMid=Math.floor(zParts.length/2);
+  const yCenterOut=[];for(let d=0;d<yParts.length;d++){const off=d%2===0?d/2:-((d+1)/2|0);const i=yMid+off;if(i>=0&&i<yParts.length)yCenterOut.push(i);}
+  const zCenterOut=[];for(let d=0;d<zParts.length;d++){const off=d%2===0?d/2:-((d+1)/2|0);const i=zMid+off;if(i>=0&&i<zParts.length)zCenterOut.push(i);}
+  for(let k=0;k<Math.min(4,yCenterOut.length);k++)order.push({kind:'Y',idx:yCenterOut[k]});
+  for(let k=0;k<Math.min(2,zCenterOut.length);k++)order.push({kind:'Z',idx:zCenterOut[k]});
+  let yi=4,zi=2;
+  while(yi<yCenterOut.length||zi<zCenterOut.length){
+    if(yi<yCenterOut.length)order.push({kind:'Y',idx:yCenterOut[yi++]});
+    if(zi<zCenterOut.length)order.push({kind:'Z',idx:zCenterOut[zi++]});
+  }
+
+  const ASSEMBLE_START=0.05,ASSEMBLE_END=0.85;
+  const span=ASSEMBLE_END-ASSEMBLE_START;
+  const dur=span*1.6/order.length;
+  const partWindow=order.map((_,k)=>{
+    const t0=ASSEMBLE_START+(k/order.length)*span;
+    return{t0,t1:Math.min(ASSEMBLE_END,t0+dur)};
+  });
+
+  let prog=0;
+  function onScroll(){const max=document.documentElement.scrollHeight-window.innerHeight;prog=max>0?Math.max(0,Math.min(1,window.scrollY/max)):0;}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+
+  const easeOut=t=>1-Math.pow(1-t,3);
+  const easeInOut=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+
+  function cameraFor(p,time){
+    const AUTO_RATE=0.18;
+    const azScroll=lerp(-Math.PI*0.35,Math.PI*1.9,easeInOut(p));
+    const az=azScroll+time*AUTO_RATE;
+    let d;
+    if(p<0.5)d=lerp(3.5,2.2,easeOut(p/0.5));
+    else d=lerp(2.2,2.7,easeInOut((p-0.5)/0.5));
+    let el;
+    if(p<0.4)el=lerp(0.55,0.18,easeInOut(p/0.4));
+    else if(p<0.85)el=lerp(0.18,0.10,(p-0.4)/0.45);
+    else el=lerp(0.10,0.22,easeOut((p-0.85)/0.15));
+    const ty=lerp(-0.1,0.05,p);
+    return{eye:[Math.sin(az)*Math.cos(el)*d,Math.sin(el)*d,Math.cos(az)*Math.cos(el)*d],target:[0,ty,0]};
+  }
+
+  // HUD refs
+  const fillEl=document.querySelector('.hud-progress .fill');
+  const numEl=document.querySelector('.hud-progress .num');
+  const chNum=document.getElementById('ch-num');
+  const chTit=document.getElementById('ch-title');
+  const chMet=document.getElementById('ch-meta');
+  const hint=document.getElementById('scroll-hint');
+  const total=parts.length;
+  const totEl=document.querySelector('.hud-counter .big');
+  if(totEl)totEl.innerHTML=`<span id="ct-now">00</span>&thinsp;/&thinsp;${String(total).padStart(2,'0')}`;
+  const ctEl=document.getElementById('ct-now');
+
+  const CHAPTERS=[
+    {p:0,num:'01',title:'Flat-pack',meta:total+' parts · 16mm honeycomb'},
+    {p:0.10,num:'02',title:'First ribs stand',meta:'middle slats first'},
+    {p:0.22,num:'03',title:'First lock-in',meta:'cross ribs thread through'},
+    {p:0.42,num:'04',title:'Push-fit assembly',meta:'no screws · no glue'},
+    {p:0.78,num:'05',title:'Locked',meta:'white face · brown core'},
+    {p:0.92,num:'06',title:'MC 205',meta:'Nordwerk Design · 2013'},
+  ];
+
+  function tick(){
+    requestAnimationFrame(tick);
+    const time=performance.now()/1000;
+    let assembled=0;
+    for(let k=0;k<order.length;k++){
+      const o=order[k];const w=partWindow[k];
+      const t=Math.max(0,Math.min(1,(prog-w.t0)/Math.max(1e-6,w.t1-w.t0)));
+      const e=easeOut(t);
+      const part=(o.kind==='Y')?yParts[o.idx]:zParts[o.idx];
+      const sp=part.userData.start;const tp=part.userData.target;
+      part.position.set(lerp(sp.pos.x,tp.x,e),lerp(sp.pos.y,tp.y,e),lerp(sp.pos.z,tp.z,e));
+      part.rotation.set(lerp(sp.rot.x,0,e),lerp(sp.rot.y,0,e),lerp(sp.rot.z,0,e));
+      if(t>=0.999)assembled++;
+    }
+    if(ctEl)ctEl.textContent=String(assembled).padStart(2,'0');
+    const c=cameraFor(prog,time);
+    cam.position.set(c.eye[0],c.eye[1],c.eye[2]);
+    cam.lookAt(c.target[0],c.target[1],c.target[2]);
+    if(fillEl)fillEl.style.width=(prog*100).toFixed(2)+'%';
+    if(numEl)numEl.textContent=String(Math.round(prog*100)).padStart(2,'0');
+    let cur=CHAPTERS[0];for(const ch of CHAPTERS)if(prog>=ch.p)cur=ch;
+    if(chNum&&chNum.textContent!==cur.num){chNum.textContent=cur.num;chTit.textContent=cur.title;chMet.textContent=cur.meta;}
+    if(hint)hint.style.opacity=prog>0.04?'0':'1';
+    renderer.render(scene,cam);
+  }
+  tick();
+
+  // Hide loading screen — model is now rendering
+  setTimeout(()=>{
+    const ld=document.getElementById('loading');
+    if(ld){ld.classList.add('hidden');setTimeout(()=>{if(ld&&ld.parentNode)ld.remove();},900);}
+  },150);
 })();
 </script>
 </body>
