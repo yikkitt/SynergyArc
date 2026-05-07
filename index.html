@@ -100,7 +100,6 @@
   <span>Roadshows<span class="mq-dot"></span></span>
   <span>Installation Nationwide<span class="mq-dot"></span></span>
   <span>Eco-Friendly Materials<span class="mq-dot"></span></span>
-  <span>ESG-Ready Reporting<span class="mq-dot"></span></span>
 </div></div>
 
 <!-- ══ SERVICES PREVIEW ══ -->
@@ -328,9 +327,9 @@ function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
 function cmm(){document.getElementById('mob-menu').classList.remove('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))cmm()});
 
-// ── Marquee clone ──
+// ── Marquee clone — duplicate spans inside same row for seamless loop ──
 const mqt=document.getElementById('mqt');
-if(mqt){const cl=mqt.cloneNode(true);mqt.parentElement.appendChild(cl)}
+if(mqt){mqt.innerHTML+=mqt.innerHTML}
 
 // ── Typewriter headline ──
 (function(){
