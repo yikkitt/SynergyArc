@@ -50,9 +50,9 @@ nav{height:64px;display:flex;align-items:center;justify-content:space-between;pa
 .mob-menu .mob-cta{display:inline-flex;align-items:center;gap:7px;background:var(--g);color:#fff;font-size:14px;font-weight:600;padding:13px 22px;border-radius:100px;text-decoration:none;margin-top:16px;border:none}
 
 /* ── MARQUEE ── */
-.mq{background:var(--g);overflow:hidden;padding:12px 0}
+.mq{background:var(--g);overflow:hidden;padding:14px 0}
 .mq-tr{display:flex;animation:mqr 28s linear infinite;white-space:nowrap}
-.mq-tr span{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#fff;display:inline-flex;align-items:center;gap:32px}
+.mq-tr span{font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#fff;display:inline-flex;align-items:center;gap:40px}
 .mq-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5);display:inline-block;flex-shrink:0}
 @keyframes mqr{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
