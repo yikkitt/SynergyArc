@@ -477,20 +477,39 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   const matCore=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
 
   // Decode + decompress geometry — uses pako (works on all browsers, no DecompressionStream needed)
+  const _em=document.getElementById('ch-meta');
   let data;
   if(window.__CHAIR_GEOM){
     data=window.__CHAIR_GEOM;
   } else {
     const b64=window.__CHAIR_GEOM_B64;
-    if(!b64||typeof pako==='undefined') return;
+    if(!b64){if(_em)_em.textContent='err: geom not loaded';return;}
+    if(typeof pako==='undefined'){if(_em)_em.textContent='err: pako missing';return;}
     try{
       const bin=atob(b64);
       const bytes=new Uint8Array(bin.length);
       for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-      const inflated=pako.ungzip(bytes);
+      let inflated;
+      try{
+        inflated=pako.ungzip(bytes);
+      }catch(e1){
+        try{
+          inflated=pako.inflate(bytes,{windowBits:47});
+        }catch(e2){
+          try{
+            inflated=pako.inflate(bytes);
+          }catch(e3){
+            if(_em)_em.textContent='infl err: '+String(e3).slice(0,30);
+            return;
+          }
+        }
+      }
       data=JSON.parse(new TextDecoder().decode(inflated));
       window.__CHAIR_GEOM=data;
-    }catch(e){return;}
+    }catch(e){
+      if(_em)_em.textContent='fail: '+String(e).slice(0,30);
+      return;
+    }
   }
 
   let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
