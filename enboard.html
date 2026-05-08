@@ -361,7 +361,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   const MAT={ply:{bpu:120,co2pu:6.0,lfpu:25.0,max:80},stk:{bpu:12,co2pu:0.6,lfpu:0.2,max:250},fbm:{bpu:18,co2pu:0.9,lfpu:0.75,max:150}};
   const MAX_B=12000,MAX_C=600,MAX_L=2500;
   const PRESETS={small:{ply:3,stk:8,fbm:4},medium:{ply:8,stk:25,fbm:10},large:{ply:20,stk:60,fbm:25},mega:{ply:50,stk:150,fbm:60}};
-  const LEVELS=[{min:0,segs:0,tag:'Move the sliders above to see your impact'},{min:150,segs:1,tag:'Minimal: a small first step'},{min:600,segs:2,tag:'Low: you''re making a difference'},{min:1500,segs:3,tag:'Medium: meaningful sustainability gains'},{min:3500,segs:4,tag:'High: real environmental leadership'},{min:7000,segs:5,tag:'Maximum: exceptional green commitment'}];
+  const LEVELS=[{min:0,segs:0,tag:'Move the sliders above to see your impact'},{min:150,segs:1,tag:'Minimal: a small first step'},{min:600,segs:2,tag:"Low: you’re making a difference"},{min:1500,segs:3,tag:'Medium: meaningful sustainability gains'},{min:3500,segs:4,tag:'High: real environmental leadership'},{min:7000,segs:5,tag:'Maximum: exceptional green commitment'}];
   const slPly=document.getElementById('ic-ply'),slStk=document.getElementById('ic-stk'),slFbm=document.getElementById('ic-fbm');
   const vPly=document.getElementById('ic-v-ply'),vStk=document.getElementById('ic-v-stk'),vFbm=document.getElementById('ic-v-fbm');
   if(!slPly)return;
