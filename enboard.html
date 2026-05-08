@@ -69,9 +69,10 @@
 <canvas id="cv"></canvas>
 
 <!-- Loading screen -->
-<div id="loading">
+<div id="loading" onclick="this.classList.add('hidden');setTimeout(()=>this.remove&&this.remove(),900)" style="cursor:pointer">
   <div class="ring"></div>
-  <div class="ring-txt">Preparing Enboard model</div>
+  <div class="ring-txt">Loading Enboard model&hellip;</div>
+  <div style="font-size:10px;color:#B0BEA8;margin-top:4px;letter-spacing:.06em">Tap to skip</div>
 </div>
 
 <!-- Scroll hint -->
@@ -359,6 +360,20 @@
   </div>
 </footer>
 
+<!-- Early safety timeout: fires from page load, before JS files download -->
+<script>
+(function(){
+  var t=setTimeout(function(){
+    var ld=document.getElementById('loading');
+    if(ld&&!ld.classList.contains('hidden')){
+      ld.classList.add('hidden');
+      setTimeout(function(){if(ld&&ld.parentNode)ld.parentNode.removeChild(ld);},900);
+    }
+  },10000); // 10 s from page load — catches slow connections
+  window._earlyLoadSafety=t;
+})();
+</script>
+
 <!-- Scripts: Three.js, geometry, then all page JS -->
 <script src="three.min.js"></script>
 <script src="chair-geom.js"></script>
@@ -367,8 +382,8 @@
 function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))document.getElementById('mob-menu').classList.remove('open')});
 
-// Safety timeout — hide loading if stalls
-setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList.contains('hidden')){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}},15000);
+// Secondary safety timeout (runs after scripts load, catches decode/parse stalls)
+setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList.contains('hidden')){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}},8000);
 
 // Impact Calculator
 (function(){
