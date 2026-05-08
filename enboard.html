@@ -72,7 +72,7 @@
   <div class="hud-chapter">
     <span id="ch-num">01</span>
     <span id="ch-title">Flat-pack</span>
-    <span id="ch-meta">9 panels · 16mm Enboard</span>
+    <span id="ch-meta">Loading...</span>
   </div>
   <div class="hud-counter"><div class="big">--</div></div>
   <div class="hud-progress"><div class="fill"></div><div class="num">00</div></div>
@@ -346,12 +346,14 @@
   </div>
 </footer>
 
-<!-- Scripts: Three.js (no heavy geometry file needed) -->
+<!-- Scripts: Three.js, geometry, then all page JS -->
 <script src="three.min.js"></script>
+<script src="chair-geom.js"></script>
 <script>
 // Mobile menu
 function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))document.getElementById('mob-menu').classList.remove('open')});
+
 
 // Impact Calculator
 (function(){
@@ -442,122 +444,160 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   obs.observe(svg);
 })();
 
-// 3D Scene — Enboard booth panel assembly (procedural, no external geometry file)
-(function(){
+// 3D Scene — MC 205 scroll-driven self-assembly
+(async function(){
   'use strict';
-  if(typeof THREE==='undefined') return;
-
+  if(typeof THREE==='undefined'){return;}
   const canvas=document.getElementById('cv');
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.setClearColor(0x000000,0);
 
   const scene=new THREE.Scene();
   const cam=new THREE.PerspectiveCamera(38,1,0.01,100);
   function resize(){renderer.setSize(window.innerWidth,window.innerHeight,false);cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();}
-  resize(); window.addEventListener('resize',resize);
+  resize();window.addEventListener('resize',resize);
 
-  // Lighting — strong key light so panels read clearly against page bg
-  scene.add(new THREE.AmbientLight(0xfff8f0,0.55));
-  const key=new THREE.DirectionalLight(0xfff4e0,1.4); key.position.set(5,9,6); key.castShadow=true; scene.add(key);
-  const fill=new THREE.DirectionalLight(0xb8cce0,0.55); fill.position.set(-5,2,-4); scene.add(fill);
-  const rim=new THREE.DirectionalLight(0x00BF63,0.18); rim.position.set(0,4,-7); scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xfff5e6,0.62));
+  const key=new THREE.DirectionalLight(0xfff2dc,1.1);
+  key.position.set(4,8,5);key.castShadow=true;
+  key.shadow.mapSize.set(2048,2048);key.shadow.camera.near=0.1;key.shadow.camera.far=24;
+  key.shadow.camera.left=-3;key.shadow.camera.right=3;key.shadow.camera.top=3;key.shadow.camera.bottom=-3;key.shadow.bias=-0.0005;
+  scene.add(key);
+  const fill=new THREE.DirectionalLight(0xc9d8e8,0.35);fill.position.set(-4,3,-3);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffe5cc,0.42);rim.position.set(0,2,-5);scene.add(rim);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.ShadowMaterial({opacity:0.13}));
+  floor.rotation.x=-Math.PI/2;floor.position.y=-1.0;floor.receiveShadow=true;scene.add(floor);
 
-  // Materials — warm tan face (visible against cream bg) + brown honeycomb edge
-  const matFace=new THREE.MeshStandardMaterial({color:0xc8b99a,roughness:0.45,metalness:0.0});
-  const matEdge=new THREE.MeshStandardMaterial({color:0x7a5230,roughness:0.88,metalness:0.0});
+  const matFace=new THREE.MeshStandardMaterial({color:0xf5f1e8,roughness:0.55,metalness:0.0});
+  const matCore=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
 
-  const PW=0.54, PH=0.80, PT=0.055, GAP=0.010; // PT=0.055 = visible brown edge thickness
-
-  // Each Enboard panel: white face (front/back), brown edge (sides)
-  function makePanel(w,h,tPos,tRotY,seed){
-    const geo=new THREE.BoxGeometry(w,h,PT);
-    // BoxGeometry groups 0=+x,1=-x,2=+y,3=-y,4=+z(front),5=-z(back)
-    geo.groups[0].materialIndex=1; geo.groups[1].materialIndex=1;
-    geo.groups[2].materialIndex=1; geo.groups[3].materialIndex=1;
-    geo.groups[4].materialIndex=0; geo.groups[5].materialIndex=0;
-    const mesh=new THREE.Mesh(geo,[matFace,matEdge]);
-    const grp=new THREE.Group(); grp.add(mesh);
-    // Deterministic scatter start (no Math.random — seed-based)
-    const s=seed*7919; const ang=(s*0.618)%(Math.PI*2); const rad=2.0+((s*0.031)%0.9);
-    const sy=((s*0.019)%2)-1;
-    grp.userData={
-      tPos:new THREE.Vector3(tPos.x,tPos.y,tPos.z),
-      tRot:{x:0,y:tRotY||0,z:0},
-      sPos:new THREE.Vector3(Math.cos(ang)*rad, sy*1.6, Math.sin(ang)*rad),
-      sRot:{x:((s*0.023)%2-1)*Math.PI, y:((s*0.031)%2-1)*Math.PI, z:((s*0.017)%2-1)*1.2}
-    };
-    const sp=grp.userData.sPos, sr=grp.userData.sRot;
-    grp.position.copy(sp); grp.rotation.set(sr.x,sr.y,sr.z);
-    scene.add(grp); return grp;
+  let data;
+  if(window.__CHAIR_GEOM){
+    data=window.__CHAIR_GEOM;
+  } else {
+    const b64=window.__CHAIR_GEOM_B64;
+    if(!b64){return;}
+    let padding=0;if(b64[b64.length-1]==='=')padding++;if(b64[b64.length-2]==='=')padding++;
+    const bytes=new Uint8Array((b64.length*3/4)-padding);let off=0;
+    await new Promise(res=>{let pos=0;function go(){const end=Math.min(pos+65536,b64.length);const bin=atob(b64.slice(pos,end));for(let i=0;i<bin.length;i++)bytes[off++]=bin.charCodeAt(i);pos=end;if(pos<b64.length)setTimeout(go,0);else res();}go();});
+    setS('Decompressing...');
+    let inflated;
+    try{
+      const ds=new DecompressionStream('gzip');const w=ds.writable.getWriter();const r2=ds.readable.getReader();
+      w.write(bytes.slice(0,off));w.close();
+      const chunks=[];let tot=0;while(true){const{done,value}=await r2.read();if(done)break;chunks.push(value);tot+=value.length;}
+      inflated=new Uint8Array(tot);let o2=0;for(const c of chunks){inflated.set(c,o2);o2+=c.length;}
+    }catch(e){data=window.__CHAIR_GEOM_RAW||[];inflated=null;}
+    if(inflated){await new Promise(r=>setTimeout(r,0));data=JSON.parse(new TextDecoder().decode(inflated));window.__CHAIR_GEOM=data;}
   }
 
-  const parts=[];
-  // Back wall: 3 columns × 2 rows
-  for(let row=0;row<2;row++){
-    for(let col=0;col<3;col++){
-      const x=(col-1)*(PW+GAP), y=(row===0?-0.5:0.5)*(PH+GAP);
-      parts.push(makePanel(PW,PH,{x,y,z:0},0,parts.length+1));
+  let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
+  for(const m of data)for(let i=0;i<m.v.length;i+=3)for(let k=0;k<3;k++){const x=m.v[i+k];if(x<lo[k])lo[k]=x;if(x>hi[k])hi[k]=x;}
+  const longest=Math.max(hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2]);
+  const SCALE=1.4/longest,CX=(lo[0]+hi[0])/2,CY=(lo[1]+hi[1])/2;
+
+  const chairRoot=new THREE.Group();scene.add(chairRoot);const parts=[];
+  for(const m of data){
+    if(!m.v.length||!m.f.length)continue;
+    const geo=new THREE.BufferGeometry();const verts=new Float32Array(m.v.length);
+    let cx=0,cy=0,cz=0,n=m.v.length/3;
+    for(let i=0;i<m.v.length;i+=3){const x=(m.v[i]-CX)*SCALE,y=(m.v[i+1]-CY)*SCALE,z=(m.v[i+2]-lo[2])*SCALE;verts[i]=x;verts[i+1]=z;verts[i+2]=-y;cx+=x;cy+=z;cz+=-y;}
+    cx/=n;cy/=n;cz/=n;
+    geo.setAttribute('position',new THREE.BufferAttribute(verts,3));geo.setIndex(new THREE.BufferAttribute(new Uint32Array(m.f),1));geo.computeVertexNormals();geo.computeBoundingBox();
+    const bb=geo.boundingBox,dx=bb.max.x-bb.min.x,dy=bb.max.y-bb.min.y,dz=bb.max.z-bb.min.z;
+    let thinAxis=0;if(dy<dx&&dy<dz)thinAxis=1;else if(dz<dx)thinAxis=2;
+    const idx=geo.index.array,pos=geo.attributes.position.array,groups=[];let curMat=-1,curStart=0;
+    const A=new THREE.Vector3(),B=new THREE.Vector3(),C=new THREE.Vector3(),nrm=new THREE.Vector3(),e1=new THREE.Vector3(),e2=new THREE.Vector3();
+    for(let t=0;t<idx.length;t+=3){
+      const a=idx[t]*3,b=idx[t+1]*3,c=idx[t+2]*3;
+      A.set(pos[a],pos[a+1],pos[a+2]);B.set(pos[b],pos[b+1],pos[b+2]);C.set(pos[c],pos[c+1],pos[c+2]);
+      e1.subVectors(B,A);e2.subVectors(C,A);nrm.crossVectors(e1,e2).normalize();
+      const mat=Math.abs(nrm.getComponent(thinAxis))>0.7?0:1;
+      if(mat!==curMat){if(curMat!==-1)groups.push({start:curStart,count:t-curStart,materialIndex:curMat});curStart=t;curMat=mat;}
     }
+    if(curMat!==-1)groups.push({start:curStart,count:idx.length-curStart,materialIndex:curMat});
+    for(const g of groups)geo.addGroup(g.start,g.count,g.materialIndex);
+    const mesh=new THREE.Mesh(geo,[matFace,matCore]);mesh.castShadow=true;mesh.receiveShadow=true;
+    geo.translate(-cx,-cy,-cz);
+    const grp=new THREE.Group();grp.add(mesh);grp.position.set(cx,cy,cz);
+    grp.userData.target=grp.position.clone();grp.userData.name=m.name;chairRoot.add(grp);parts.push(grp);
   }
-  // Side wings (90° slot-in)
-  const wallW=3*PW+2*GAP, wingD=0.36;
-  parts.push(makePanel(wingD,PH*2+GAP,{x:-(wallW/2+wingD/2),y:0,z:-wingD/2}, Math.PI*0.5, parts.length+1));
-  parts.push(makePanel(wingD,PH*2+GAP,{x: (wallW/2+wingD/2),y:0,z:-wingD/2},-Math.PI*0.5, parts.length+1));
-  // Counter
-  parts.push(makePanel(PW*1.8,0.28,{x:0,y:-(PH+GAP*2+0.14+0.04),z:-0.04},0, parts.length+1));
+  chairRoot.position.y=-0.55;
 
-  // Stagger each panel's assembly window across scroll
-  const total=parts.length;
-  parts.forEach((p,i)=>{p.userData.t0=(i/total)*0.70; p.userData.t1=p.userData.t0+0.30;});
+  const yP=[],zP=[];
+  for(const p of parts){const bb=new THREE.Box3().setFromObject(p);(bb.max.x-bb.min.x<bb.max.z-bb.min.z?yP:zP).push(p);}
+  yP.sort((a,b)=>a.userData.target.x-b.userData.target.x);
+  zP.sort((a,b)=>a.userData.target.z-b.userData.target.z);
+
+  function setStart(p,kind,k,tot){
+    const angle=(k/tot)*Math.PI*1.8+(kind==='Y'?0.2:-0.4);
+    const radius=(kind==='Y'?1.7:1.5)+((k*13)%7)*0.05;
+    p.userData.start={pos:new THREE.Vector3(Math.cos(angle)*radius,kind==='Y'?-0.7+((k*17)%5)*0.02:1.6+k*0.05,Math.sin(angle)*radius*0.9+(kind==='Z'?-0.5:0)),rot:new THREE.Euler(kind==='Y'?-Math.PI/2+((k*7)%5)*0.04:((k*5)%7)*0.04,((k*11)%7)*0.06,((k*7)%5)*0.05)};
+  }
+  yP.forEach((p,k)=>setStart(p,'Y',k,yP.length));zP.forEach((p,k)=>setStart(p,'Z',k,zP.length));
+  parts.forEach(p=>{p.position.copy(p.userData.start.pos);p.rotation.copy(p.userData.start.rot);});
+
+  const order=[];
+  const yMid=Math.floor(yP.length/2),zMid=Math.floor(zP.length/2);
+  const yCO=[],zCO=[];
+  for(let d=0;d<yP.length;d++){const off=d%2===0?d/2:-((d+1)/2|0);const i=yMid+off;if(i>=0&&i<yP.length)yCO.push(i);}
+  for(let d=0;d<zP.length;d++){const off=d%2===0?d/2:-((d+1)/2|0);const i=zMid+off;if(i>=0&&i<zP.length)zCO.push(i);}
+  for(let k=0;k<Math.min(4,yCO.length);k++)order.push({kind:'Y',idx:yCO[k]});
+  for(let k=0;k<Math.min(2,zCO.length);k++)order.push({kind:'Z',idx:zCO[k]});
+  let yi=4,zi=2;while(yi<yCO.length||zi<zCO.length){if(yi<yCO.length)order.push({kind:'Y',idx:yCO[yi++]});if(zi<zCO.length)order.push({kind:'Z',idx:zCO[zi++]});}
+
+  const AS=0.05,AE=0.85,span=AE-AS,dur=span*1.6/order.length;
+  const pw=order.map((_,k)=>{const t0=AS+(k/order.length)*span;return{t0,t1:Math.min(AE,t0+dur)};});
 
   let prog=0;
-  window.addEventListener('scroll',()=>{
-    const max=document.documentElement.scrollHeight-window.innerHeight;
-    prog=max>0?Math.max(0,Math.min(1,window.scrollY/max)):0;
-  },{passive:true});
+  window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-window.innerHeight;prog=max>0?Math.max(0,Math.min(1,window.scrollY/max)):0;},{passive:true});
 
-  const eO=t=>1-Math.pow(1-t,3), lr=(a,b,t)=>a+(b-a)*t;
+  const eO=t=>1-Math.pow(1-t,3),eIO=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,lr=(a,b,t)=>a+(b-a)*t;
+
+  function camFor(p,time){
+    const az=lr(-Math.PI*0.35,Math.PI*1.9,eIO(p))+time*0.18;
+    const d=p<0.5?lr(3.5,2.2,eO(p/0.5)):lr(2.2,2.7,eIO((p-0.5)/0.5));
+    const el=p<0.4?lr(0.55,0.18,eIO(p/0.4)):p<0.85?lr(0.18,0.10,(p-0.4)/0.45):lr(0.10,0.22,eO((p-0.85)/0.15));
+    const ty=lr(-0.1,0.05,p);
+    return{eye:[Math.sin(az)*Math.cos(el)*d,Math.sin(el)*d,Math.cos(az)*Math.cos(el)*d],target:[0,ty,0]};
+  }
 
   const fillEl=document.querySelector('.hud-progress .fill');
   const chNum=document.getElementById('ch-num'),chTit=document.getElementById('ch-title'),chMet=document.getElementById('ch-meta');
   const hint=document.getElementById('scroll-hint');
+  const total=parts.length;
   const totEl=document.querySelector('.hud-counter .big');
-  if(totEl) totEl.innerHTML='<span id="ct-now">00</span>&thinsp;/&thinsp;'+String(total).padStart(2,'0');
+  if(totEl)totEl.innerHTML='<span id="ct-now">00</span>&thinsp;/&thinsp;'+String(total).padStart(2,'0');
   const ctEl=document.getElementById('ct-now');
 
   const CHAPTERS=[
-    {p:0,   num:'01',title:'Flat-pack',   meta:total+' panels · 16mm Enboard'},
-    {p:0.14,num:'02',title:'Back wall',   meta:'3 \xd7 2 panel grid'},
-    {p:0.50,num:'03',title:'Side wings',  meta:'slot-fit 90\xb0 lock-in'},
-    {p:0.72,num:'04',title:'Counter in',  meta:'no screws \xb7 no glue'},
-    {p:0.88,num:'05',title:'Ready',       meta:'white face \xb7 brown core'}
+    {p:0,num:'01',title:'Flat-pack',meta:total+' parts · 16mm honeycomb'},
+    {p:0.10,num:'02',title:'First ribs stand',meta:'middle slats first'},
+    {p:0.22,num:'03',title:'First lock-in',meta:'cross ribs thread through'},
+    {p:0.42,num:'04',title:'Push-fit assembly',meta:'no screws · no glue'},
+    {p:0.78,num:'05',title:'Locked',meta:'white face · brown core'},
+    {p:0.92,num:'06',title:'MC 205',meta:'Nordwerk Design · 2013'}
   ];
 
   function tick(){
-    requestAnimationFrame(tick);
-    const time=performance.now()/1000; let assembled=0;
-    parts.forEach((p,i)=>{
-      const t=Math.max(0,Math.min(1,(prog-p.userData.t0)/Math.max(1e-6,p.userData.t1-p.userData.t0)));
-      const e=eO(t);
-      const sp=p.userData.sPos,sr=p.userData.sRot,tp=p.userData.tPos,tr=p.userData.tRot;
-      p.position.set(lr(sp.x,tp.x,e),lr(sp.y,tp.y,e),lr(sp.z,tp.z,e));
-      p.rotation.set(lr(sr.x,tr.x,e),lr(sr.y,tr.y,e),lr(sr.z,tr.z,e));
-      if(t>=0.999) assembled++;
-    });
-    if(ctEl) ctEl.textContent=String(assembled).padStart(2,'0');
-
-    // Camera: gentle orbit + pulls in as booth assembles
-    const az=prog*Math.PI*0.55-Math.PI*0.12+time*0.045;
-    const d=lr(3.8,2.7,eO(prog));
-    const el=lr(0.40,0.10,eO(prog));
-    cam.position.set(Math.sin(az)*Math.cos(el)*d,Math.sin(el)*d,Math.cos(az)*Math.cos(el)*d);
-    cam.lookAt(0,0,0);
-
-    if(fillEl) fillEl.style.width=(prog*100).toFixed(1)+'%';
-    let cur=CHAPTERS[0]; for(const ch of CHAPTERS) if(prog>=ch.p) cur=ch;
+    requestAnimationFrame(tick);const time=performance.now()/1000;let assembled=0;
+    for(let k=0;k<order.length;k++){
+      const o=order[k],w=pw[k],t=Math.max(0,Math.min(1,(prog-w.t0)/Math.max(1e-6,w.t1-w.t0))),e=eO(t);
+      const part=o.kind==='Y'?yP[o.idx]:zP[o.idx];
+      const sp=part.userData.start,tp=part.userData.target;
+      part.position.set(lr(sp.pos.x,tp.x,e),lr(sp.pos.y,tp.y,e),lr(sp.pos.z,tp.z,e));
+      part.rotation.set(lr(sp.rot.x,0,e),lr(sp.rot.y,0,e),lr(sp.rot.z,0,e));
+      if(t>=0.999)assembled++;
+    }
+    if(ctEl)ctEl.textContent=String(assembled).padStart(2,'0');
+    const c=camFor(prog,time);cam.position.set(c.eye[0],c.eye[1],c.eye[2]);cam.lookAt(c.target[0],c.target[1],c.target[2]);
+    if(fillEl)fillEl.style.width=(prog*100).toFixed(2)+'%';
+    let cur=CHAPTERS[0];for(const ch of CHAPTERS)if(prog>=ch.p)cur=ch;
     if(chNum&&chNum.textContent!==cur.num){chNum.textContent=cur.num;chTit.textContent=cur.title;chMet.textContent=cur.meta;}
-    if(hint) hint.style.opacity=prog>0.04?'0':'1';
+    if(hint)hint.style.opacity=prog>0.04?'0':'1';
     renderer.render(scene,cam);
   }
   tick();
