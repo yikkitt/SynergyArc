@@ -12,13 +12,6 @@
 /* ── Fixed 3D canvas behind all content ── */
 #cv{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;pointer-events:none}
 
-/* ── Loading screen ── */
-#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:1000;background:#FAFDF8;transition:opacity .8s ease}
-#loading.hidden{opacity:0;pointer-events:none}
-.ring{width:36px;height:36px;border-radius:50%;border:2.5px solid rgba(26,32,22,.12);border-top-color:#00BF63;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ring-txt{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#8A9A82;text-align:center;max-width:200px}
-
 /* ── Scroll hint ── */
 #scroll-hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:50;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .5s}
 #scroll-hint span{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6B7B63}
@@ -67,13 +60,6 @@
 
 <!-- Fixed 3D canvas -->
 <canvas id="cv"></canvas>
-
-<!-- Loading screen -->
-<div id="loading" onclick="this.classList.add('hidden');setTimeout(()=>this.remove&&this.remove(),900)" style="cursor:pointer">
-  <div class="ring"></div>
-  <div class="ring-txt">Loading Enboard model&hellip;</div>
-  <div style="font-size:10px;color:#B0BEA8;margin-top:4px;letter-spacing:.06em">Tap to skip</div>
-</div>
 
 <!-- Scroll hint -->
 <div id="scroll-hint">
@@ -360,20 +346,6 @@
   </div>
 </footer>
 
-<!-- Early safety timeout: fires from page load, before JS files download -->
-<script>
-(function(){
-  var t=setTimeout(function(){
-    var ld=document.getElementById('loading');
-    if(ld&&!ld.classList.contains('hidden')){
-      ld.classList.add('hidden');
-      setTimeout(function(){if(ld&&ld.parentNode)ld.parentNode.removeChild(ld);},900);
-    }
-  },10000); // 10 s from page load — catches slow connections
-  window._earlyLoadSafety=t;
-})();
-</script>
-
 <!-- Scripts: Three.js, geometry, then all page JS -->
 <script src="three.min.js"></script>
 <script src="chair-geom.js"></script>
@@ -382,8 +354,6 @@
 function tmm(){document.getElementById('mob-menu').classList.toggle('open')}
 document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.target.closest('.mob-menu'))document.getElementById('mob-menu').classList.remove('open')});
 
-// Secondary safety timeout (runs after scripts load, catches decode/parse stalls)
-setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList.contains('hidden')){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}},8000);
 
 // Impact Calculator
 (function(){
@@ -477,11 +447,7 @@ setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList
 // 3D Scene — MC 205 scroll-driven self-assembly
 (async function(){
   'use strict';
-  if(typeof THREE==='undefined'){
-    const ld=document.getElementById('loading');
-    if(ld){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}
-    return;
-  }
+  if(typeof THREE==='undefined'){return;}
   const canvas=document.getElementById('cv');
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -512,10 +478,8 @@ setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList
   if(window.__CHAIR_GEOM){
     data=window.__CHAIR_GEOM;
   } else {
-    const setS=msg=>{const el=document.querySelector('.ring-txt');if(el)el.textContent=msg;};
-    setS('Decoding model...');
     const b64=window.__CHAIR_GEOM_B64;
-    if(!b64){const ld=document.getElementById('loading');if(ld){ld.classList.add('hidden');setTimeout(()=>ld.remove&&ld.remove(),900);}return;}
+    if(!b64){return;}
     let padding=0;if(b64[b64.length-1]==='=')padding++;if(b64[b64.length-2]==='=')padding++;
     const bytes=new Uint8Array((b64.length*3/4)-padding);let off=0;
     await new Promise(res=>{let pos=0;function go(){const end=Math.min(pos+65536,b64.length);const bin=atob(b64.slice(pos,end));for(let i=0;i<bin.length;i++)bytes[off++]=bin.charCodeAt(i);pos=end;if(pos<b64.length)setTimeout(go,0);else res();}go();});
@@ -527,8 +491,7 @@ setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList
       const chunks=[];let tot=0;while(true){const{done,value}=await r2.read();if(done)break;chunks.push(value);tot+=value.length;}
       inflated=new Uint8Array(tot);let o2=0;for(const c of chunks){inflated.set(c,o2);o2+=c.length;}
     }catch(e){data=window.__CHAIR_GEOM_RAW||[];inflated=null;}
-    if(inflated){setS('Parsing...');await new Promise(r=>setTimeout(r,0));data=JSON.parse(new TextDecoder().decode(inflated));window.__CHAIR_GEOM=data;}
-    setS('Building scene...');
+    if(inflated){await new Promise(r=>setTimeout(r,0));data=JSON.parse(new TextDecoder().decode(inflated));window.__CHAIR_GEOM=data;}
   }
 
   let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
@@ -638,7 +601,6 @@ setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.classList
     renderer.render(scene,cam);
   }
   tick();
-  setTimeout(()=>{const ld=document.getElementById('loading');if(ld){ld.classList.add('hidden');setTimeout(()=>{if(ld&&ld.parentNode)ld.remove();},900);}},150);
 })();
 </script>
 </body>
