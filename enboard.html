@@ -457,17 +457,17 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   function resize(){renderer.setSize(window.innerWidth,window.innerHeight,false);cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();}
   resize(); window.addEventListener('resize',resize);
 
-  // Lighting
-  scene.add(new THREE.AmbientLight(0xfff5e6,0.72));
-  const key=new THREE.DirectionalLight(0xfff2dc,1.0); key.position.set(4,8,5); scene.add(key);
-  const fill=new THREE.DirectionalLight(0xc9d8e8,0.40); fill.position.set(-4,3,-3); scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xffe5cc,0.45); rim.position.set(0,3,-6); scene.add(rim);
+  // Lighting — strong key light so panels read clearly against page bg
+  scene.add(new THREE.AmbientLight(0xfff8f0,0.55));
+  const key=new THREE.DirectionalLight(0xfff4e0,1.4); key.position.set(5,9,6); key.castShadow=true; scene.add(key);
+  const fill=new THREE.DirectionalLight(0xb8cce0,0.55); fill.position.set(-5,2,-4); scene.add(fill);
+  const rim=new THREE.DirectionalLight(0x00BF63,0.18); rim.position.set(0,4,-7); scene.add(rim);
 
-  // Materials: cream white face + honeycomb-brown edge (matches real Enboard)
-  const matFace=new THREE.MeshStandardMaterial({color:0xf2ede4,roughness:0.5,metalness:0.0});
-  const matEdge=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
+  // Materials — warm tan face (visible against cream bg) + brown honeycomb edge
+  const matFace=new THREE.MeshStandardMaterial({color:0xc8b99a,roughness:0.45,metalness:0.0});
+  const matEdge=new THREE.MeshStandardMaterial({color:0x7a5230,roughness:0.88,metalness:0.0});
 
-  const PW=0.54, PH=0.80, PT=0.022, GAP=0.010;
+  const PW=0.54, PH=0.80, PT=0.055, GAP=0.010; // PT=0.055 = visible brown edge thickness
 
   // Each Enboard panel: white face (front/back), brown edge (sides)
   function makePanel(w,h,tPos,tRotY,seed){
