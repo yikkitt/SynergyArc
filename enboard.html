@@ -446,7 +446,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
 })();
 
 // 3D Scene — MC 205 scroll-driven self-assembly
-(function(){
+(async function(){
   'use strict';
   if(typeof THREE==='undefined') return;
 
@@ -476,7 +476,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   const matFace=new THREE.MeshStandardMaterial({color:0xf5f1e8,roughness:0.55,metalness:0.0});
   const matCore=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
 
-  // Decode + decompress geometry — uses pako (works on all browsers, no DecompressionStream needed)
+  // Decode + decompress geometry — async chunked to keep UI thread free
   const _em=document.getElementById('ch-meta');
   let data;
   if(window.__CHAIR_GEOM){
@@ -485,31 +485,59 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
     const b64=window.__CHAIR_GEOM_B64;
     if(!b64){if(_em)_em.textContent='err: geom not loaded';return;}
     if(typeof pako==='undefined'){if(_em)_em.textContent='err: pako missing';return;}
+
+    if(_em)_em.textContent='Decoding model...';
+    // Chunked base64 decode — yields to browser between 64KB chunks, prevents UI freeze
+    const CHUNK=65536; // must be divisible by 4 for valid base64 boundaries
+    let padding=0;
+    if(b64[b64.length-1]==='=')padding++;
+    if(b64[b64.length-2]==='=')padding++;
+    const byteLen=Math.floor(b64.length*3/4)-padding;
+    const bytes=new Uint8Array(byteLen);
+    let offset=0;
+    await new Promise(resolve=>{
+      let pos=0;
+      function nextChunk(){
+        const end=Math.min(pos+CHUNK,b64.length);
+        const bin=atob(b64.slice(pos,end));
+        for(let i=0;i<bin.length;i++)bytes[offset++]=bin.charCodeAt(i);
+        pos=end;
+        if(pos<b64.length){setTimeout(nextChunk,0);}
+        else{resolve();}
+      }
+      nextChunk();
+    });
+
+    if(_em)_em.textContent='Decompressing...';
+    await new Promise(r=>setTimeout(r,0));
+
+    let inflated;
     try{
-      const bin=atob(b64);
-      const bytes=new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-      let inflated;
+      inflated=pako.ungzip(bytes.slice(0,offset));
+    }catch(e1){
       try{
-        inflated=pako.ungzip(bytes);
-      }catch(e1){
+        inflated=pako.inflate(bytes.slice(0,offset),{windowBits:47});
+      }catch(e2){
         try{
-          inflated=pako.inflate(bytes,{windowBits:47});
-        }catch(e2){
-          try{
-            inflated=pako.inflate(bytes);
-          }catch(e3){
-            if(_em)_em.textContent='infl err: '+String(e3).slice(0,30);
-            return;
-          }
+          inflated=pako.inflate(bytes.slice(0,offset));
+        }catch(e3){
+          if(_em)_em.textContent='infl err: '+String(e3).slice(0,30);
+          return;
         }
       }
+    }
+
+    if(_em)_em.textContent='Parsing model...';
+    await new Promise(r=>setTimeout(r,0));
+
+    try{
       data=JSON.parse(new TextDecoder().decode(inflated));
       window.__CHAIR_GEOM=data;
     }catch(e){
-      if(_em)_em.textContent='fail: '+String(e).slice(0,30);
+      if(_em)_em.textContent='parse err: '+String(e).slice(0,30);
       return;
     }
+    if(_em)_em.textContent='Building scene...';
   }
 
   let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
