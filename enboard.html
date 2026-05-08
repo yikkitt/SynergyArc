@@ -487,7 +487,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
       const bin=atob(b64);
       const bytes=new Uint8Array(bin.length);
       for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-      const inflated=pako.inflate(bytes);
+      const inflated=pako.ungzip(bytes);
       data=JSON.parse(new TextDecoder().decode(inflated));
       window.__CHAIR_GEOM=data;
     }catch(e){return;}
