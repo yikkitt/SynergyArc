@@ -346,7 +346,8 @@
   </div>
 </footer>
 
-<!-- Scripts: Three.js, geometry, then all page JS -->
+<!-- Scripts: pako inflate (cross-browser gzip), Three.js, chair geometry -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako_inflate.min.js"></script>
 <script src="three.min.js"></script>
 <script src="chair-geom.js"></script>
 <script>
@@ -445,9 +446,10 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
 })();
 
 // 3D Scene — MC 205 scroll-driven self-assembly
-(async function(){
+(function(){
   'use strict';
-  if(typeof THREE==='undefined'){return;}
+  if(typeof THREE==='undefined') return;
+
   const canvas=document.getElementById('cv');
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -474,24 +476,21 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
   const matFace=new THREE.MeshStandardMaterial({color:0xf5f1e8,roughness:0.55,metalness:0.0});
   const matCore=new THREE.MeshStandardMaterial({color:0x9c7042,roughness:0.92,metalness:0.0});
 
+  // Decode + decompress geometry — uses pako (works on all browsers, no DecompressionStream needed)
   let data;
   if(window.__CHAIR_GEOM){
     data=window.__CHAIR_GEOM;
   } else {
     const b64=window.__CHAIR_GEOM_B64;
-    if(!b64){return;}
-    let padding=0;if(b64[b64.length-1]==='=')padding++;if(b64[b64.length-2]==='=')padding++;
-    const bytes=new Uint8Array((b64.length*3/4)-padding);let off=0;
-    await new Promise(res=>{let pos=0;function go(){const end=Math.min(pos+65536,b64.length);const bin=atob(b64.slice(pos,end));for(let i=0;i<bin.length;i++)bytes[off++]=bin.charCodeAt(i);pos=end;if(pos<b64.length)setTimeout(go,0);else res();}go();});
-    setS('Decompressing...');
-    let inflated;
+    if(!b64||typeof pako==='undefined') return;
     try{
-      const ds=new DecompressionStream('gzip');const w=ds.writable.getWriter();const r2=ds.readable.getReader();
-      w.write(bytes.slice(0,off));w.close();
-      const chunks=[];let tot=0;while(true){const{done,value}=await r2.read();if(done)break;chunks.push(value);tot+=value.length;}
-      inflated=new Uint8Array(tot);let o2=0;for(const c of chunks){inflated.set(c,o2);o2+=c.length;}
-    }catch(e){data=window.__CHAIR_GEOM_RAW||[];inflated=null;}
-    if(inflated){await new Promise(r=>setTimeout(r,0));data=JSON.parse(new TextDecoder().decode(inflated));window.__CHAIR_GEOM=data;}
+      const bin=atob(b64);
+      const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      const inflated=pako.inflate(bytes);
+      data=JSON.parse(new TextDecoder().decode(inflated));
+      window.__CHAIR_GEOM=data;
+    }catch(e){return;}
   }
 
   let lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
@@ -601,7 +600,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('nav')&&!e.ta
     renderer.render(scene,cam);
   }
   tick();
-})();
+}());
 </script>
 </body>
 </html>
