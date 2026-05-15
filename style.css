@@ -253,7 +253,7 @@ h1.hh em{font-style:normal;color:var(--g)}
 
 /* ── JOURNEY SECTION ── */
 .journey-wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:rgba(0,191,99,.1);border-radius:24px;overflow:hidden}
-.journey-stage{background:var(--wh);padding:36px 28px;transition:background .25s}
+.journey-stage{background:var(--wh);padding:36px 28px;transition:background .25s;display:flex;flex-direction:column}
 .journey-stage:hover{background:var(--gl)}
 .journey-stage-num{font-family:var(--fh);font-size:56px;font-weight:700;line-height:1;color:rgba(0,191,99,.12);margin-bottom:16px;letter-spacing:-.04em}
 .journey-stage-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:14px}
@@ -261,7 +261,7 @@ h1.hh em{font-style:normal;color:var(--g)}
 .journey-tag-2{background:#FFF8E1;color:#854F0B;border:1px solid #FAC775}
 .journey-tag-3{background:var(--gl);color:var(--gd);border:1px solid rgba(0,191,99,.25)}
 .journey-stage-title{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:10px;line-height:1.2}
-.journey-stage-desc{font-size:13px;color:var(--mt);line-height:1.75;margin-bottom:16px}
+.journey-stage-desc{font-size:13px;color:var(--mt);line-height:1.75;margin-bottom:16px;flex:1}
 .journey-example{background:var(--s1);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--mt);line-height:1.6;border-left:3px solid var(--g)}
 .journey-example strong{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g);margin-bottom:4px}
 .journey-mix-bar{display:flex;gap:3px;margin-top:14px;border-radius:6px;overflow:hidden;height:8px}
