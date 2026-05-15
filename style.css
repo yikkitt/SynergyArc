@@ -142,8 +142,8 @@ h1.hh em{font-style:normal;color:var(--g)}
 .en-badge{display:inline-flex;align-items:center;gap:8px;background:var(--g);color:#fff;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:18px}
 .en-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0 28px}
 .en-s{background:var(--wh);border-radius:14px;padding:18px;border:1.5px solid var(--bd)}
-.en-sn{font-size:26px;font-weight:700;color:var(--g);line-height:1;margin-bottom:4px;letter-spacing:-.02em}
-.en-sl{font-size:12.5px;color:var(--mt);line-height:1.4}
+.en-sn{font-size:17px;font-weight:700;color:var(--g);line-height:1.2;margin-bottom:4px;letter-spacing:-.01em}
+.en-sl{font-size:12px;color:var(--mt);line-height:1.5}
 .en-card{background:var(--wh);border-radius:18px;padding:22px;border:1px solid var(--bdn);margin-top:12px}
 .en-ct{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .en-ct::before{content:'';width:3px;height:13px;background:var(--g);border-radius:2px;display:block;flex-shrink:0}
