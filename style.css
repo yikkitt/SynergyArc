@@ -256,7 +256,7 @@ h1.hh em{font-style:normal;color:var(--g)}
 .journey-stage{background:var(--wh);padding:36px 28px;transition:background .25s;display:flex;flex-direction:column}
 .journey-stage:hover{background:var(--gl)}
 .journey-stage-num{font-family:var(--fh);font-size:56px;font-weight:700;line-height:1;color:rgba(0,191,99,.12);margin-bottom:16px;letter-spacing:-.04em}
-.journey-stage-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:14px}
+.journey-stage-tag{display:inline-block;align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:14px}
 .journey-tag-1{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
 .journey-tag-2{background:#FFF8E1;color:#854F0B;border:1px solid #FAC775}
 .journey-tag-3{background:var(--gl);color:var(--gd);border:1px solid rgba(0,191,99,.25)}
